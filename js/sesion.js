@@ -1,5 +1,4 @@
-
-const SIGNIA_API_URL = "http://127.0.0.1:8000";
+const SIGNIA_API_URL = window.SIGNIA_CONFIG.API_URL;
 
 function obtenerToken() {
     return (
