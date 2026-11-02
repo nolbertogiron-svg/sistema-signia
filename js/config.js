@@ -4,6 +4,6 @@
     const direccionServidor = "https://sistema-signia.onrender.com";
 
     window.SIGNIA_CONFIG = Object.freeze({
-        API_URL: direccionServidor.replace(/\/+$/, "")
+        API_URL: direccionServidor
     });
 })();
