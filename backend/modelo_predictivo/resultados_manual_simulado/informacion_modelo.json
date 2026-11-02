@@ -1,0 +1,18 @@
+{
+  "nombre": "regresion_logistica",
+  "variables": [
+    "fallas_ultimos_7d",
+    "fallas_ultimos_30d",
+    "dias_desde_mantenimiento"
+  ],
+  "umbral": 0.5080351632801505,
+  "horizonte_dias": 7,
+  "origen": "registros manuales artificialmente simulados",
+  "semilla": 42,
+  "probabilidades_calibradas": false,
+  "uso": "demostracion; no validado con fallas reales",
+  "momento_consulta": "cierre del dia",
+  "seleccion": "Mayor F1 en validacion",
+  "corte_validacion": "2026-07-04T00:00:00",
+  "corte_prueba": "2026-08-28T00:00:00"
+}

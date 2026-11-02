@@ -1,0 +1,24 @@
+.env
+.env.*
+!.env.example
+venv/
+.venv/
+__pycache__/
+*.pyc
+backend/uploads/
+*.zip
+# Copias anteriores
+/SIGNIA_actualizacion_formulario/
+
+# Archivos de datos locales
+*.xlsx
+/backend/modelo_predictivo/datos/
+/backend/modelo_predictivo/datos_publicos/
+/backend/modelo_predictivo/resultados/
+
+# Experimentos anteriores
+/backend/modelo_predictivo/resultados_demo/
+/backend/modelo_predictivo/resultados_ampliados/
+
+# Datos simulados usados durante el entrenamiento
+/backend/modelo_predictivo/resultados_manual_simulado/*.csv

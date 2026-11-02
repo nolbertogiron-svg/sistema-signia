@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel principal | SIGNIA</title>
+
+    <link rel="stylesheet" href="css/panel.css">
+    <script src="js/sesion.js" defer></script>
+
+    <style>
+        .oculto {
+            display: none !important;
+        }
+
+        .panel-simple {
+            margin-top: 25px;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 10px 25px rgba(33, 75, 104, 0.08);
+        }
+
+        .panel-simple h2 {
+            margin-top: 0;
+            color: #214b68;
+        }
+
+        .panel-simple p {
+            color: #607d8b;
+            line-height: 1.6;
+        }
+
+        .mensaje-bienvenida {
+            background: #edf5fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .resumen {
+            display: block;
+            width: 100%;
+        }
+
+        .grupo-dashboard {
+            width: 100%;
+            margin-bottom: 32px;
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(33, 75, 104, 0.08);
+        }
+
+        .encabezado-grupo-dashboard {
+            margin-bottom: 20px;
+        }
+
+        .titulo-grupo-dashboard {
+            margin: 0;
+            color: #214b68;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .descripcion-grupo-dashboard {
+            margin: 6px 0 0 0;
+            color: #7891a0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .grid-dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .grid-dashboard.dos-columnas {
+            grid-template-columns: repeat(2, minmax(220px, 1fr));
+        }
+
+        .tarjeta-resumen {
+            min-height: 95px;
+        }
+
+        .dashboard-analitico {
+            background: #ffffff;
+        }
+
+        .bloque-criticidad {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 24px;
+        }
+
+        .panel-grafico {
+            background: #f7fbfe;
+            border-radius: 18px;
+            padding: 20px;
+            border: 1px solid #e0edf6;
+        }
+
+        .panel-grafico h3 {
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: #214b68;
+        }
+
+        .fila-barra {
+            margin-bottom: 18px;
+        }
+
+        .encabezado-barra {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+            color: #214b68;
+            font-weight: 700;
+        }
+
+        .barra-contenedor {
+            width: 100%;
+            height: 16px;
+            background: #e6f0f7;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .barra-progreso {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            transition: width 0.4s ease;
+        }
+
+        .barra-critica {
+            background: #d94b4b;
+        }
+
+        .barra-alta {
+            background: #f1a33c;
+        }
+
+        .barra-media {
+            background: #5e9ed2;
+        }
+
+        .barra-operable {
+            background: #38b271;
+        }
+
+        .tabla-top-fallas {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .tabla-top-fallas th,
+        .tabla-top-fallas td {
+            padding: 10px;
+            border-bottom: 1px solid #dceaf3;
+            text-align: left;
+        }
+
+        .tabla-top-fallas th {
+            color: #214b68;
+            font-weight: 800;
+        }
+
+        .etiqueta-criticidad {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .etiqueta-critica {
+            background: #fde8e8;
+            color: #b53030;
+        }
+
+        .etiqueta-alta {
+            background: #fff1d6;
+            color: #a96a00;
+        }
+
+        .etiqueta-media {
+            background: #e5f1fb;
+            color: #23689b;
+        }
+
+        .etiqueta-operable {
+            background: #e4f6ec;
+            color: #21845a;
+        }
+
+        @media (max-width: 1100px) {
+            .grid-dashboard,
+            .grid-dashboard.dos-columnas {
+                grid-template-columns: repeat(2, minmax(220px, 1fr));
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .bloque-criticidad {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .grid-dashboard,
+            .grid-dashboard.dos-columnas {
+                grid-template-columns: 1fr;
+            }
+
+            .grupo-dashboard {
+                padding: 18px;
+            }
+        }
+
+        /* Resumen global visible para todos los roles autenticados */
+        .resumen-general .grid-dashboard {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .resumen-general .tarjeta-resumen {
+            width: 100%;
+            max-width: 560px;
+        }
+    </style>
+    <link rel="stylesheet" href="css/interfaz.css">
+    <script src="js/interfaz.js"></script>
+    <script src="js/panel-resumen.js" defer></script>
+    <script src="js/menu-movil.js" defer></script>
+    <script src="js/graficos-panel.js" defer></script>
+    <script src="js/panel-diseno.js" defer></script>
+    <script src="js/tendencia-fallas.js" defer></script>
+    <link rel="stylesheet" href="css/prediccion-demo.css">
+    <script src="js/prediccion-demo.js" defer></script>
+</head>
+    <script src="js/config.js"></script>
+<body>
+    <aside class="menu-lateral">
+        <div class="contenedor-logo">
+            <img
+                src="css/imagenes/logo-signia.png"
+                alt="Logo de SIGNIA"
+                class="logo"
+            >
+
+            <h2>SIGNIA</h2>
+            <p>Gestión de Maquinarias</p>
+        </div>
+
+        <nav class="menu">
+            <a href="panel.html" class="opcion activa">
+                🏠 Panel principal
+            </a>
+
+            <a href="registrar-maquina.html" class="opcion" id="opcionRegistrar">
+                ⚙️ Registrar mantenimiento
+            </a>
+
+            <a href="buscar-maquina.html" class="opcion">
+                🔍 Buscar por código
+            </a>
+
+            <a href="mantenimientos.html" class="opcion" id="opcionMantenimientos">
+                🛠️ Mantenimientos
+            </a>
+
+            <a href="reportes.html" class="opcion" id="opcionReportes">
+                📊 Reportes
+            </a>
+
+            <a href="usuarios.html" class="opcion" id="opcionUsuarios">
+                👥 Usuarios
+            </a>
+        </nav>
+
+        <a href="index.html" id="cerrarSesion" class="cerrar-sesion">
+            Cerrar sesión
+        </a>
+    </aside>
+
+    <main class="contenido-principal">
+        <header class="barra-superior">
+            <div>
+                <h1>Panel principal</h1>
+
+                <p id="descripcionPanel">
+                    Bienvenido al Sistema de Gestión de Maquinarias
+                </p>
+            </div>
+
+            <div class="datos-usuario">
+                <div class="avatar" id="avatarUsuario">
+                    --
+                </div>
+
+                <div>
+                    <strong id="nombreUsuario">
+                        Cargando usuario...
+                    </strong>
+
+                    <span id="rolUsuario">
+                        Cargando rol...
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <section class="panel-simple oculto" id="panelOperativo">
+            <div class="mensaje-bienvenida">
+                <h2>Bienvenido a SIGNIA</h2>
+
+                <p>
+                    Desde este panel puedes registrar mantenimientos,
+                    adjuntar evidencias y consultar el historial de una máquina.
+                </p>
+            </div>
+        </section>
+
+        <section class="buscador">
+            <div>
+                <h2>Buscar una máquina</h2>
+
+                <p>
+                    Ingresa el código para consultar toda su información.
+                </p>
+            </div>
+
+            <form class="formulario-busqueda" id="formularioBusquedaPanel">
+                <input
+                    type="text"
+                    id="codigoBusquedaPanel"
+                    placeholder="Ejemplo: 2590"
+                    autocomplete="off"
+                    required
+                >
+
+                <button type="submit">
+                    Buscar
+                </button>
+            </form>
+        </section>
+
+        <section class="resumen oculto resumen-general" id="resumenGeneral">
+            <div class="grupo-dashboard">
+                <div class="encabezado-grupo-dashboard">
+                    <h2 class="titulo-grupo-dashboard">
+                        Panel general del sistema
+                    </h2>
+
+                    <p class="descripcion-grupo-dashboard">
+                        Cantidad total de máquinas registradas en SIGNIA.
+                    </p>
+                </div>
+
+                <div class="grid-dashboard">
+                    <article class="tarjeta-resumen">
+                        <span class="icono azul">⚙️</span>
+
+                        <div>
+                            <p>Total de máquinas</p>
+                            <h3 id="totalMaquinas">...</h3>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+
+        </section>
+
+        <section class="resumen oculto" id="resumenAdministrativo">
+            <div class="grupo-dashboard">
+                <div class="encabezado-grupo-dashboard">
+                    <h2 class="titulo-grupo-dashboard">
+                        Estado operativo de máquinas
+                    </h2>
+
+                    <p class="descripcion-grupo-dashboard">
+                        Distribución actual de los equipos según su condición operativa.
+                    </p>
+                </div>
+
+                <div class="grid-dashboard">
+                    <article class="tarjeta-resumen">
+                        <span class="icono verde">✅</span>
+
+                        <div>
+                            <p>Operables</p>
+                            <h3 id="equiposOperables">...</h3>
+                        </div>
+                    </article>
+
+                    <article class="tarjeta-resumen">
+                        <span class="icono amarillo">🟡</span>
+
+                        <div>
+                            <p>En revisión</p>
+                            <h3 id="equiposRevision">...</h3>
+                        </div>
+                    </article>
+
+                    <article class="tarjeta-resumen">
+                        <span class="icono rojo">🔴</span>
+
+                        <div>
+                            <p>Presentan fallas</p>
+                            <h3 id="equiposFallas">...</h3>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <div class="grupo-dashboard">
+                <div class="encabezado-grupo-dashboard">
+                    <h2 class="titulo-grupo-dashboard">
+                        Gestión de mantenimientos
+                    </h2>
+
+                    <p class="descripcion-grupo-dashboard">
+                        Cantidad de mantenimientos preventivos y correctivos registrados.
+                    </p>
+                </div>
+
+                <div class="grid-dashboard dos-columnas">
+                    <article class="tarjeta-resumen">
+                        <span class="icono verde">🛡️</span>
+
+                        <div>
+                            <p>Preventivos</p>
+                            <h3 id="totalPreventivos">...</h3>
+                        </div>
+                    </article>
+
+                    <article class="tarjeta-resumen">
+                        <span class="icono rojo">🛠️</span>
+
+                        <div>
+                            <p>Correctivos</p>
+                            <h3 id="totalCorrectivos">...</h3>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+
+            <div class="grupo-dashboard">
+                <div class="encabezado-grupo-dashboard">
+                    <h2 class="titulo-grupo-dashboard">
+                        Control de fallas
+                    </h2>
+
+                    <p class="descripcion-grupo-dashboard">
+                        Seguimiento de fallas pendientes, solucionadas y acumuladas.
+                    </p>
+                </div>
+
+                <div class="grid-dashboard">
+                    <article class="tarjeta-resumen">
+                        <span class="icono rojo">⚠️</span>
+
+                        <div>
+                            <p>Fallas pendientes</p>
+                            <h3 id="fallasPendientes">...</h3>
+                        </div>
+                    </article>
+
+                    <article class="tarjeta-resumen">
+                        <span class="icono verde">✅</span>
+
+                        <div>
+                            <p>Fallas solucionadas</p>
+                            <h3 id="fallasSolucionadas">...</h3>
+                        </div>
+                    </article>
+
+                    <article class="tarjeta-resumen">
+                        <span class="icono morado">📌</span>
+
+                        <div>
+                            <p>Total de fallas</p>
+                            <h3 id="totalFallas">...</h3>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <div class="grupo-dashboard">
+                <div class="encabezado-grupo-dashboard">
+                    <h2 class="titulo-grupo-dashboard">
+                        Priorización de equipos críticos
+                    </h2>
+
+                    <p class="descripcion-grupo-dashboard">
+                        Clasificación de equipos según la cantidad de fallas pendientes.
+                    </p>
+                </div>
+
+                <div class="grid-dashboard">
+                    <article class="tarjeta-resumen">
+                        <span class="icono rojo">🚨</span>
+
+                        <div>
+                            <p>Máquinas críticas</p>
+                            <h3 id="maquinasCriticas">...</h3>
+                        </div>
+                    </article>
+
+                    <article class="tarjeta-resumen">
+                        <span class="icono amarillo">🔶</span>
+
+                        <div>
+                            <p>Alta prioridad</p>
+                            <h3 id="maquinasAltaPrioridad">...</h3>
+                        </div>
+                    </article>
+
+                    <article class="tarjeta-resumen">
+                        <span class="icono azul">🔷</span>
+
+                        <div>
+                            <p>Prioridad media</p>
+                            <h3 id="maquinasPrioridadMedia">...</h3>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <div class="grupo-dashboard dashboard-analitico">
+                <div class="encabezado-grupo-dashboard">
+                    <h2 class="titulo-grupo-dashboard">
+                        Dashboard de criticidad
+                    </h2>
+
+                    <p class="descripcion-grupo-dashboard">
+                        Distribución porcentual de máquinas según fallas pendientes y ranking de equipos con mayor atención requerida.
+                    </p>
+                </div>
+
+                <div class="bloque-criticidad">
+                    <div class="panel-grafico">
+                        <h3>
+                            Distribución por nivel de criticidad
+                        </h3>
+
+                        <div class="fila-barra">
+                            <div class="encabezado-barra">
+                                <span>Críticas</span>
+                                <span id="porcentajeCriticas">0%</span>
+                            </div>
+
+                            <div class="barra-contenedor">
+                                <div
+                                    class="barra-progreso barra-critica"
+                                    id="barraCriticas"
+                                ></div>
+                            </div>
+                        </div>
+
+                        <div class="fila-barra">
+                            <div class="encabezado-barra">
+                                <span>Alta prioridad</span>
+                                <span id="porcentajeAltaPrioridad">0%</span>
+                            </div>
+
+                            <div class="barra-contenedor">
+                                <div
+                                    class="barra-progreso barra-alta"
+                                    id="barraAltaPrioridad"
+                                ></div>
+                            </div>
+                        </div>
+
+                        <div class="fila-barra">
+                            <div class="encabezado-barra">
+                                <span>Prioridad media</span>
+                                <span id="porcentajeMediaPrioridad">0%</span>
+                            </div>
+
+                            <div class="barra-contenedor">
+                                <div
+                                    class="barra-progreso barra-media"
+                                    id="barraMediaPrioridad"
+                                ></div>
+                            </div>
+                        </div>
+
+                        <div class="fila-barra">
+                            <div class="encabezado-barra">
+                                <span>Operables / sin fallas pendientes</span>
+                                <span id="porcentajeOperables">0%</span>
+                            </div>
+
+                            <div class="barra-contenedor">
+                                <div
+                                    class="barra-progreso barra-operable"
+                                    id="barraOperables"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-grafico">
+                        <h3>
+                            Top máquinas con más fallas pendientes
+                        </h3>
+
+                        <table class="tabla-top-fallas">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Fallas</th>
+                                    <th>Nivel</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="tablaTopFallas">
+                                <tr>
+                                    <td colspan="3">
+                                        Cargando información...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <p
+            id="mensajeResumen"
+            style="display: none; margin: 15px 0; color: #b94242; text-align: center;"
+        ></p>
+<section id="prediccionDemo" class="pred-demo" hidden>
+    <div class="pred-demo-cabecera">
+        <div>
+            <span class="pred-demo-etiqueta">MODELO PREDICTIVO</span>
+            <h2>Predicción experimental</h2>
+            <p>
+                Consulta experimental de posible falla durante los próximos siete días, según el historial disponible de la máquina.
+            </p>
+        </div>
+        <span class="pred-demo-modelo">Random Forest</span>
+    </div>
+
+    <p class="pred-demo-aviso">
+        Consulta experimental con eventos registrados en Supabase.
+        Modelo entrenado con datos artificiales, pendiente de validación
+        con registros reales.
+    </p>
+
+    <form id="formPrediccionDemo" class="pred-demo-form">
+        <div>
+            <label for="equipoPrediccion">Máquina</label>
+            <select id="equipoPrediccion" required disabled>
+                <option value="">Cargando equipos...</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="fechaPrediccion">Fecha del último evento registrado</label>
+            <select id="fechaPrediccion" required disabled>
+                <option value="">Selecciona un equipo</option>
+            </select>
+        </div>
+
+        <button id="consultarPrediccion" type="submit" disabled>
+            Consultar predicción
+        </button>
+    </form>
+
+    <p id="mensajePrediccion" role="status" aria-live="polite">
+        Conectando con el modelo…
+    </p>
+
+    <div id="resultadoPrediccion" class="pred-demo-resultado" hidden>
+        <span id="estadoPrediccion" class="pred-demo-estado"></span>
+        <h3 id="tituloPrediccion"></h3>
+        <p id="detallePrediccion"></p>
+        <p id="interpretacionPrediccion"></p>
+
+        <details class="pred-demo-detalles">
+            <summary>Ver puntuación del modelo</summary>
+            <p id="puntuacionPrediccion"></p>
+            <p>
+                La puntuación no está calibrada y no representa
+                un porcentaje de riesgo real.
+            </p>
+        </details>
+    </div>
+</section>
+
+        <section class="seccion-acciones">
+            <div class="titulo-seccion">
+                <h2>Acciones rápidas</h2>
+
+                <p>
+                    Selecciona una opción para comenzar.
+                </p>
+            </div>
+
+            <div class="acciones">
+                <a href="registrar-maquina.html" class="tarjeta-accion" id="accionRegistrar">
+                    <div class="circulo-icono">＋</div>
+
+                    <h3>Registrar mantenimiento</h3>
+
+                    <p>
+                        Registra una observación, ubicación y evidencia de mantenimiento.
+                    </p>
+
+                    <span>Comenzar →</span>
+                </a>
+
+                <a href="buscar-maquina.html" class="tarjeta-accion">
+                    <div class="circulo-icono">🔍</div>
+
+                    <h3>Consultar historial</h3>
+
+                    <p>
+                        Busca una máquina y revisa sus mantenimientos y archivos de evidencia.
+                    </p>
+
+                    <span>Consultar →</span>
+                </a>
+
+                <a href="mantenimientos.html" class="tarjeta-accion" id="accionMantenimientos">
+                    <div class="circulo-icono">🛠️</div>
+
+                    <h3>Mantenimientos</h3>
+
+                    <p>
+                        Consulta estados, mantenimientos preventivos y correctivos.
+                    </p>
+
+                    <span>Ver mantenimientos →</span>
+                </a>
+
+                <a href="reportes.html" class="tarjeta-accion" id="accionReportes">
+                    <div class="circulo-icono">📊</div>
+
+                    <h3>Reportes</h3>
+
+                    <p>
+                        Revisa información general y reportes del sistema.
+                    </p>
+
+                    <span>Ver reportes →</span>
+                </a>
+
+                <a href="usuarios.html" class="tarjeta-accion" id="accionUsuarios">
+                    <div class="circulo-icono">👥</div>
+
+                    <h3>Usuarios</h3>
+
+                    <p>
+                        Administra los usuarios y roles del sistema.
+                    </p>
+
+                    <span>Gestionar usuarios →</span>
+                </a>
+            </div>
+        </section>
+
+        <footer>
+            Sistema de Gestión de Maquinarias SIGNIA
+        </footer>
+    </main>
+
+    <script>
+        const SIGNIA_API_URL_PANEL =
+            "http://127.0.0.1:8000";
+
+        function obtenerTokenPanel() {
+            return (
+                sessionStorage.getItem(
+                    "signia_token"
+                ) ||
+                localStorage.getItem(
+                    "signia_token"
+                )
+            );
+        }
+
+        function normalizarRol(rol) {
+            return String(
+                rol || ""
+            )
+                .trim()
+                .toLowerCase();
+        }
+
+        function esRolAdministrativo(rol) {
+            return (
+                rol === "administracion" ||
+                rol === "administración" ||
+                rol === "administrador"
+            );
+        }
+
+        function esRolRegistro(rol) {
+            return (
+                rol === "proveedor" ||
+                rol === "tecnico" ||
+                rol === "técnico" ||
+                rol === "operativo" ||
+                rol === "administrador"
+            );
+        }
+
+        function ocultarElemento(id) {
+            const elemento =
+                document.getElementById(id);
+
+            if (elemento) {
+                elemento.classList.add(
+                    "oculto"
+                );
+            }
+        }
+
+        function mostrarElemento(id) {
+            const elemento =
+                document.getElementById(id);
+
+            if (elemento) {
+                elemento.classList.remove(
+                    "oculto"
+                );
+            }
+        }
+
+        function colocarTexto(id, valor) {
+            const elemento =
+                document.getElementById(id);
+
+            if (elemento) {
+                elemento.textContent =
+                    valor ?? 0;
+            }
+        }
+
+        function actualizarBarraCriticidad(
+            idBarra,
+            idTexto,
+            porcentaje
+        ) {
+            const barra =
+                document.getElementById(idBarra);
+
+            const texto =
+                document.getElementById(idTexto);
+
+            const valor =
+                Number(porcentaje || 0);
+
+            const valorSeguro =
+                Math.max(
+                    0,
+                    Math.min(
+                        valor,
+                        100
+                    )
+                );
+
+            if (barra) {
+                barra.style.width =
+                    valorSeguro + "%";
+            }
+
+            if (texto) {
+                texto.textContent =
+                    valorSeguro + "%";
+            }
+        }
+
+        function claseCriticidad(nivel) {
+            const nivelLimpio =
+                String(nivel || "")
+                    .toLowerCase();
+
+            if (nivelLimpio.includes("crítica")) {
+                return "etiqueta-critica";
+            }
+
+            if (nivelLimpio.includes("critica")) {
+                return "etiqueta-critica";
+            }
+
+            if (nivelLimpio.includes("alta")) {
+                return "etiqueta-alta";
+            }
+
+            if (nivelLimpio.includes("operable")) {
+                return "etiqueta-operable";
+            }
+
+            return "etiqueta-media";
+        }
+
+        function cargarTablaTopFallas(lista) {
+            const tabla =
+                document.getElementById(
+                    "tablaTopFallas"
+                );
+
+            if (!tabla) {
+                return;
+            }
+
+            if (
+                !lista ||
+                lista.length === 0
+            ) {
+                tabla.innerHTML = `
+                    <tr>
+                        <td colspan="3">
+                            No hay máquinas con fallas pendientes.
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+            tabla.innerHTML =
+                lista.map(
+                    function (maquina) {
+                        return `
+                            <tr>
+                                <td>
+                                    ${maquina.codigo || "Sin código"}
+                                </td>
+
+                                <td>
+                                    ${maquina.fallas_pendientes || 0}
+                                </td>
+
+                                <td>
+                                    <span class="etiqueta-criticidad ${claseCriticidad(maquina.nivel_criticidad)}">
+                                        ${maquina.nivel_criticidad || "Media"}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                ).join("");
+        }
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+                const formulario =
+                    document.getElementById(
+                        "formularioBusquedaPanel"
+                    );
+
+                if (formulario) {
+                    formulario.addEventListener(
+                        "submit",
+                        function (evento) {
+                            evento.preventDefault();
+
+                            const codigo =
+                                document
+                                    .getElementById(
+                                        "codigoBusquedaPanel"
+                                    )
+                                    .value
+                                    .trim();
+
+                            if (!codigo) {
+                                return;
+                            }
+
+                            sessionStorage.setItem(
+                                "signia_codigo_busqueda",
+                                codigo
+                            );
+
+                            window.location.href =
+                                "buscar-maquina.html";
+                        }
+                    );
+                }
+            }
+        );
+
+        async function cargarResumenPanel() {
+            const token =
+                obtenerTokenPanel();
+
+            const mensaje =
+                document.getElementById(
+                    "mensajeResumen"
+                );
+
+            if (!token) {
+                window.location.href =
+                    "index.html";
+
+                return;
+            }
+
+            try {
+                const respuesta =
+                    await fetch(
+                        SIGNIA_API_URL_PANEL +
+                        "/resumen",
+                        {
+                            headers: {
+                                Authorization:
+                                    "Bearer " +
+                                    token
+                            }
+                        }
+                    );
+
+                const resultado =
+                    await respuesta.json();
+
+                if (
+                    respuesta.status === 401
+                ) {
+                    throw new Error(
+                        "La sesión venció. Inicia sesión nuevamente."
+                    );
+                }
+
+                if (
+                    !respuesta.ok
+                ) {
+                    throw new Error(
+                        resultado.detail ||
+                        "No se pudo cargar el resumen."
+                    );
+                }
+
+                const totalPreventivos =
+                    Number(
+                        resultado.total_preventivos || 0
+                    );
+
+                const totalCorrectivos =
+                    Number(
+                        resultado.total_correctivos || 0
+                    );
+
+                colocarTexto(
+                    "totalMaquinas",
+                    resultado.total_maquinas ?? 0
+                );
+
+                colocarTexto(
+                    "equiposOperables",
+                    resultado.equipos_operables ?? 0
+                );
+
+                colocarTexto(
+                    "equiposRevision",
+                    resultado.equipos_en_revision ?? 0
+                );
+
+                colocarTexto(
+                    "equiposFallas",
+                    resultado.equipos_presentan_fallas ?? 0
+                );
+
+                colocarTexto(
+                    "totalPreventivos",
+                    totalPreventivos
+                );
+
+                colocarTexto(
+                    "totalCorrectivos",
+                    totalCorrectivos
+                );
+
+                colocarTexto(
+                    "fallasPendientes",
+                    resultado.fallas_pendientes ?? 0
+                );
+
+                colocarTexto(
+                    "fallasSolucionadas",
+                    resultado.fallas_solucionadas ?? 0
+                );
+
+                colocarTexto(
+                    "totalFallas",
+                    resultado.total_fallas ?? 0
+                );
+
+                colocarTexto(
+                    "maquinasCriticas",
+                    resultado.maquinas_criticas ?? 0
+                );
+
+                colocarTexto(
+                    "maquinasAltaPrioridad",
+                    resultado.maquinas_alta_prioridad ?? 0
+                );
+
+                colocarTexto(
+                    "maquinasPrioridadMedia",
+                    resultado.maquinas_prioridad_media ?? 0
+                );
+
+                actualizarBarraCriticidad(
+                    "barraCriticas",
+                    "porcentajeCriticas",
+                    resultado.porcentaje_criticas
+                );
+
+                actualizarBarraCriticidad(
+                    "barraAltaPrioridad",
+                    "porcentajeAltaPrioridad",
+                    resultado.porcentaje_alta_prioridad
+                );
+
+                actualizarBarraCriticidad(
+                    "barraMediaPrioridad",
+                    "porcentajeMediaPrioridad",
+                    resultado.porcentaje_media_prioridad
+                );
+
+                actualizarBarraCriticidad(
+                    "barraOperables",
+                    "porcentajeOperables",
+                    resultado.porcentaje_operables
+                );
+
+                cargarTablaTopFallas(
+                    resultado.top_maquinas_fallas
+                );
+
+                if (mensaje) {
+                    mensaje.style.display =
+                        "none";
+                }
+
+            } catch (error) {
+                const idsResumen = [
+                    "totalMaquinas",
+                    "equiposOperables",
+                    "equiposRevision",
+                    "equiposFallas",
+                    "totalPreventivos",
+                    "totalCorrectivos",
+                    "fallasPendientes",
+                    "fallasSolucionadas",
+                    "totalFallas",
+                    "maquinasCriticas",
+                    "maquinasAltaPrioridad",
+                    "maquinasPrioridadMedia"
+                ];
+
+                idsResumen.forEach(
+                    function (id) {
+                        colocarTexto(
+                            id,
+                            "—"
+                        );
+                    }
+                );
+
+                if (mensaje) {
+                    mensaje.textContent =
+                        error.message;
+
+                    mensaje.style.display =
+                        "block";
+                }
+
+                console.error(
+                    error
+                );
+            }
+        }
+
+        function aplicarVistaPanelPorRol(usuario) {
+            const rol =
+                normalizarRol(
+                    usuario.rol
+                );
+
+            const descripcionPanel =
+                document.getElementById(
+                    "descripcionPanel"
+                );
+
+            ocultarElemento(
+                "panelOperativo"
+            );
+
+            ocultarElemento(
+                "resumenAdministrativo"
+            );
+
+            mostrarElemento(
+                "resumenGeneral"
+            );
+
+            cargarResumenPanel();
+
+            ocultarElemento(
+                "accionRegistrar"
+            );
+
+            ocultarElemento(
+                "accionMantenimientos"
+            );
+
+            ocultarElemento(
+                "accionReportes"
+            );
+
+            ocultarElemento(
+                "accionUsuarios"
+            );
+
+            if (
+                esRolAdministrativo(rol)
+            ) {
+                if (descripcionPanel) {
+                    descripcionPanel.textContent =
+                        "Resumen general del sistema de gestión de maquinarias.";
+                }
+
+                mostrarElemento(
+                    "resumenAdministrativo"
+                );
+
+                mostrarElemento(
+                    "accionMantenimientos"
+                );
+
+                mostrarElemento(
+                    "accionReportes"
+                );
+
+                if (
+                    rol === "administrador"
+                ) {
+                    mostrarElemento(
+                        "accionRegistrar"
+                    );
+
+                    mostrarElemento(
+                        "accionUsuarios"
+                    );
+                }
+
+                return;
+            }
+
+            if (
+                descripcionPanel
+            ) {
+                descripcionPanel.textContent =
+                    "Bienvenido al Sistema de Gestión de Maquinarias.";
+            }
+
+            mostrarElemento(
+                "panelOperativo"
+            );
+
+            if (
+                esRolRegistro(rol)
+            ) {
+                mostrarElemento(
+                    "accionRegistrar"
+                );
+            }
+        }
+
+        document.addEventListener(
+            "signiaSesionLista",
+            function (evento) {
+                const usuario =
+                    evento.detail.usuario;
+
+                const trabajador =
+                    evento.detail.trabajador;
+
+                const avatar =
+                    document.getElementById(
+                        "avatarUsuario"
+                    );
+
+                const nombreUsuario =
+                    document.getElementById(
+                        "nombreUsuario"
+                    );
+
+                const rolUsuario =
+                    document.getElementById(
+                        "rolUsuario"
+                    );
+
+                const nombreVisible = trabajador
+                    ? [trabajador.nombres, trabajador.apellidos]
+                        .filter(Boolean)
+                        .join(" ")
+                        .trim()
+                    : usuario.nombre;
+
+                if (nombreVisible) {
+                    nombreUsuario.textContent = nombreVisible;
+                    avatar.textContent = nombreVisible
+                        .trim()
+                        .split(/\s+/)
+                        .slice(0, 2)
+                        .map(parte => parte[0])
+                        .join("")
+                        .toUpperCase();
+                }
+
+                if (
+                    usuario.rol
+                ) {
+                    rolUsuario.textContent =
+                        usuario.rol;
+                }
+
+                aplicarVistaPanelPorRol(
+                    usuario
+                );
+            }
+        );
+    </script>
+</body>
+</html>

@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Mantenimientos | SIGNIA</title>
+
+    <link
+        rel="stylesheet"
+        href="css/maquinas.css"
+    >
+
+    <script
+        src="js/sesion.js"
+        defer
+    ></script>
+
+    <style>
+        .contenedor-mantenimientos {
+            padding: 30px;
+        }
+
+        .resumen-mantenimientos {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .tarjeta-resumen-mantenimiento {
+            background: white;
+            border-radius: 16px;
+            padding: 22px;
+            border: 1px solid #d8e6ef;
+        }
+
+        .tarjeta-resumen-mantenimiento span {
+            display: block;
+            color: #607d90;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .tarjeta-resumen-mantenimiento strong {
+            display: block;
+            color: #174d73;
+            font-size: 30px;
+        }
+
+        .numero-preventivo {
+            color: #21845a !important;
+        }
+
+        .numero-correctivo {
+            color: #b94242 !important;
+        }
+
+        .numero-revision {
+            color: #d28a00 !important;
+        }
+
+        .numero-falla {
+            color: #b94242 !important;
+        }
+
+        .contenedor-tabla {
+            background: white;
+            border-radius: 18px;
+            padding: 25px;
+            overflow-x: auto;
+        }
+
+        .encabezado-tabla {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .encabezado-tabla h2 {
+            margin: 0;
+            color: #174d73;
+        }
+
+        .encabezado-tabla p {
+            color: #607d90;
+        }
+
+        .buscador {
+            padding: 11px 15px;
+            border: 1px solid #cadde9;
+            border-radius: 10px;
+            min-width: 260px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 14px;
+            background: #edf5fa;
+            color: #174d73;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #e3edf3;
+            color: #425f72;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: #f8fbfd;
+        }
+
+        .codigo {
+            font-weight: bold;
+            color: #174d73;
+        }
+
+        .numero {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .preventivo {
+            color: #21845a;
+        }
+
+        .correctivo {
+            color: #b94242;
+        }
+
+        .revision {
+            color: #d28a00;
+        }
+
+        .total {
+            color: #3979a8;
+        }
+
+        .estado-badge {
+            display: inline-block;
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-weight: bold;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .estado-operable {
+            background: #e4f6ec;
+            color: #21845a;
+        }
+
+        .estado-revision {
+            background: #fff4d8;
+            color: #9a6a00;
+        }
+
+        .estado-falla {
+            background: #fde8e8;
+            color: #b94242;
+        }
+
+        .selector-estado {
+            padding: 8px 10px;
+            border: 1px solid #cadde9;
+            border-radius: 9px;
+            background: white;
+            color: #214b68;
+            font-weight: 600;
+        }
+
+        .boton-actualizar {
+            border: 0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            background: #21845a;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 6px;
+        }
+
+        .boton-actualizar:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .boton-historial {
+            display: inline-block;
+            padding: 8px 13px;
+            background: #5e9ed2;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .boton-historial:hover,
+        .boton-actualizar:hover {
+            opacity: 0.85;
+        }
+
+        .estado {
+            padding: 25px;
+            text-align: center;
+            color: #607d90;
+        }
+
+        .error {
+            color: #b94242;
+        }
+
+        .texto-pequeno {
+            display: block;
+            margin-top: 4px;
+            color: #718998;
+            font-size: 12px;
+        }
+
+        @media (max-width: 900px) {
+            .resumen-mantenimientos {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .resumen-mantenimientos {
+                grid-template-columns: 1fr;
+            }
+
+            .encabezado-tabla {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .buscador {
+                min-width: 0;
+                width: 100%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="css/interfaz.css">
+    <script src="js/interfaz.js"></script>
+    <script src="js/menu-movil.js" defer></script>
+</head>
+    <script src="js/config.js"></script>
+<body>
+
+    <aside class="menu-lateral">
+
+        <div class="contenedor-logo">
+
+            <img
+                src="css/imagenes/logo-signia.png"
+                alt="Logo de SIGNIA"
+                class="logo"
+            >
+
+            <h2>SIGNIA</h2>
+
+            <p>
+                Gestión de Maquinarias
+            </p>
+
+        </div>
+
+        <nav class="menu">
+
+            <a
+                href="panel.html"
+                class="opcion"
+            >
+                🏠 Panel principal
+            </a>
+
+            <a
+                href="registrar-maquina.html"
+                class="opcion"
+            >
+                ⚙️ Registrar mantenimiento
+            </a>
+
+            <a
+                href="buscar-maquina.html"
+                class="opcion"
+            >
+                🔍 Buscar por código
+            </a>
+
+            <a
+                href="mantenimientos.html"
+                class="opcion activa"
+            >
+                📊 Mantenimientos
+            </a>
+
+            <a
+                href="reportes.html"
+                class="opcion"
+            >
+                📈 Reportes
+            </a>
+
+            <a
+                href="usuarios.html"
+                class="opcion"
+            >
+                👥 Usuarios
+            </a>
+
+        </nav>
+
+        <a
+            href="index.html"
+            id="cerrarSesion"
+            class="cerrar-sesion"
+        >
+            Cerrar sesión
+        </a>
+
+    </aside>
+
+    <main class="contenido-principal">
+
+        <header class="barra-superior">
+
+            <div>
+
+                <a
+                    href="panel.html"
+                    class="volver"
+                >
+                    ← Volver al panel
+                </a>
+
+                <h1>
+                    Mantenimientos
+                </h1>
+
+                <p>
+                    Consulta el estado actual de las máquinas y sus mantenimientos.
+                </p>
+
+            </div>
+
+            <div class="datos-usuario">
+
+                <div
+                    class="avatar"
+                    id="avatarUsuario"
+                >
+                    --
+                </div>
+
+                <div>
+
+                    <strong id="nombreUsuario">
+                        Cargando...
+                    </strong>
+
+                    <span id="rolUsuario">
+                        Cargando...
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <section class="contenedor-mantenimientos">
+
+            <div class="resumen-mantenimientos">
+
+                <article class="tarjeta-resumen-mantenimiento">
+                    <span>
+                        Total de máquinas
+                    </span>
+
+                    <strong id="totalMaquinas">
+                        ...
+                    </strong>
+                </article>
+
+                <article class="tarjeta-resumen-mantenimiento">
+                    <span>
+                        Operables
+                    </span>
+
+                    <strong
+                        id="totalOperables"
+                        class="numero-preventivo"
+                    >
+                        ...
+                    </strong>
+                </article>
+
+                <article class="tarjeta-resumen-mantenimiento">
+                    <span>
+                        En revisión
+                    </span>
+
+                    <strong
+                        id="totalRevision"
+                        class="numero-revision"
+                    >
+                        ...
+                    </strong>
+                </article>
+
+                <article class="tarjeta-resumen-mantenimiento">
+                    <span>
+                        Presentan fallas
+                    </span>
+
+                    <strong
+                        id="totalFallas"
+                        class="numero-falla"
+                    >
+                        ...
+                    </strong>
+                </article>
+
+                <article class="tarjeta-resumen-mantenimiento">
+                    <span>
+                        Total de mantenimientos
+                    </span>
+
+                    <strong id="totalMantenimientos">
+                        ...
+                    </strong>
+                </article>
+
+                <article class="tarjeta-resumen-mantenimiento">
+                    <span>
+                        Preventivos
+                    </span>
+
+                    <strong
+                        id="totalPreventivos"
+                        class="numero-preventivo"
+                    >
+                        ...
+                    </strong>
+                </article>
+
+                <article class="tarjeta-resumen-mantenimiento">
+                    <span>
+                        Correctivos
+                    </span>
+
+                    <strong
+                        id="totalCorrectivos"
+                        class="numero-correctivo"
+                    >
+                        ...
+                    </strong>
+                </article>
+
+                <article class="tarjeta-resumen-mantenimiento">
+                    <span>
+                        Observación de la máquina
+                    </span>
+
+                    <strong
+                        id="totalSoloRevision"
+                        class="numero-revision"
+                    >
+                        ...
+                    </strong>
+                </article>
+
+            </div>
+
+            <div class="contenedor-tabla">
+
+                <div class="encabezado-tabla">
+
+                    <div>
+                        <h2>
+                            Estado y mantenimiento por máquina
+                        </h2>
+
+                        <p>
+                            Revisa el estado actual, los mantenimientos y las observaciones registradas por máquina.
+                        </p>
+                    </div>
+
+                    <input
+                        type="search"
+                        id="buscadorMaquinas"
+                        class="buscador"
+                        placeholder="Buscar por código, marca o modelo..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+                <div
+                    id="estado"
+                    class="estado"
+                >
+                    Cargando información...
+                </div>
+
+                <table
+                    id="tablaMantenimientos"
+                    style="display:none;"
+                >
+                    <thead>
+                        <tr>
+                            <th>
+                                Código
+                            </th>
+
+                            <th>
+                                Máquina
+                            </th>
+
+                            <th>
+                                Estado actual
+                            </th>
+
+                            <th>
+                                Preventivos
+                            </th>
+
+                            <th>
+                                Correctivos
+                            </th>
+
+                            <th>
+                                Observación
+                            </th>
+
+                            <th>
+                                Total
+                            </th>
+
+                            <th>
+                                Acción
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tablaBody"></tbody>
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        const API_URL =
+            "http://127.0.0.1:8000";
+
+        let maquinas = [];
+
+        let registros = [];
+
+        let usuarioActual = null;
+
+        function obtenerToken() {
+            return (
+                localStorage.getItem(
+                    "signia_token"
+                ) ||
+                sessionStorage.getItem(
+                    "signia_token"
+                )
+            );
+        }
+
+        function obtenerUsuarioGuardado() {
+            const texto =
+                sessionStorage.getItem(
+                    "signia_usuario"
+                ) ||
+                localStorage.getItem(
+                    "signia_usuario"
+                );
+
+            if (!texto) {
+                return null;
+            }
+
+            try {
+                return JSON.parse(texto);
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function esAdministrador() {
+            return (
+                usuarioActual &&
+                (
+                    usuarioActual.rol === "administrador" ||
+                    usuarioActual.rol === "administracion"||
+                    usuarioActual.rol === "tecnico"
+                )
+            );
+        }
+
+        function escaparHTML(valor) {
+            const elemento =
+                document.createElement(
+                    "div"
+                );
+
+            elemento.textContent =
+                valor === null ||
+                valor === undefined
+                    ? ""
+                    : String(valor);
+
+            return elemento.innerHTML;
+        }
+
+        function estadoNormalizado(estado) {
+            const valor =
+                String(
+                    estado || "operable"
+                )
+                    .toLowerCase()
+                    .trim();
+
+            if (
+                valor === "en_reparacion"
+            ) {
+                return "presenta_fallas";
+            }
+
+            if (
+                valor === "en_observacion"
+            ) {
+                return "en_revision";
+            }
+
+            if (
+                valor === "presenta_fallas" ||
+                valor === "en_revision" ||
+                valor === "operable"
+            ) {
+                return valor;
+            }
+
+            return "operable";
+        }
+
+        function nombreEstado(estado) {
+            const valor =
+                estadoNormalizado(estado);
+
+            const estados = {
+                operable:
+                    "🟢 Operable",
+
+                en_revision:
+                    "🟡 En revisión",
+
+                presenta_fallas:
+                    "🔴 Presenta fallas"
+            };
+
+            return estados[valor];
+        }
+
+        function claseEstado(estado) {
+            const valor =
+                estadoNormalizado(estado);
+
+            if (
+                valor === "operable"
+            ) {
+                return "estado-operable";
+            }
+
+            if (
+                valor === "en_revision"
+            ) {
+                return "estado-revision";
+            }
+
+            return "estado-falla";
+        }
+
+        function tipoNormalizado(tipo) {
+            return String(
+                tipo || ""
+            )
+                .toLowerCase()
+                .trim();
+        }
+
+        async function cargarDatos() {
+            const token =
+                obtenerToken();
+
+            usuarioActual =
+                obtenerUsuarioGuardado();
+
+            if (!token) {
+                window.location.href =
+                    "index.html";
+
+                return;
+            }
+
+            const estado =
+                document.getElementById(
+                    "estado"
+                );
+
+            try {
+                const respuestaMaquinas =
+                    await fetch(
+                        API_URL +
+                        "/maquinas",
+                        {
+                            headers: {
+                                Authorization:
+                                    "Bearer " +
+                                    token
+                            }
+                        }
+                    );
+
+                if (
+                    !respuestaMaquinas.ok
+                ) {
+                    throw new Error(
+                        "No se pudieron cargar las máquinas."
+                    );
+                }
+
+                maquinas =
+                    await respuestaMaquinas.json();
+
+                const respuestaRegistros =
+                    await fetch(
+                        API_URL +
+                        "/registros",
+                        {
+                            headers: {
+                                Authorization:
+                                    "Bearer " +
+                                    token
+                            }
+                        }
+                    );
+
+                if (
+                    !respuestaRegistros.ok
+                ) {
+                    throw new Error(
+                        "No se pudieron cargar los mantenimientos."
+                    );
+                }
+
+                registros =
+                    await respuestaRegistros.json();
+
+                mostrarResumen();
+
+                mostrarTabla(
+                    maquinas
+                );
+
+            } catch (error) {
+                console.error(
+                    error
+                );
+
+                estado.className =
+                    "estado error";
+
+                estado.textContent =
+                    error.message;
+            }
+        }
+
+        function mostrarResumen() {
+            const totalOperables =
+                maquinas.filter(
+                    function (maquina) {
+                        return estadoNormalizado(
+                            maquina.estado_equipo
+                        ) === "operable";
+                    }
+                ).length;
+
+            const totalRevision =
+                maquinas.filter(
+                    function (maquina) {
+                        return estadoNormalizado(
+                            maquina.estado_equipo
+                        ) === "en_revision";
+                    }
+                ).length;
+
+            const totalFallas =
+                maquinas.filter(
+                    function (maquina) {
+                        return estadoNormalizado(
+                            maquina.estado_equipo
+                        ) === "presenta_fallas";
+                    }
+                ).length;
+
+            const preventivos =
+                registros.filter(
+                    function (registro) {
+                        return tipoNormalizado(
+                            registro.tipo_mantenimiento
+                        ) === "preventivo";
+                    }
+                ).length;
+
+            const correctivos =
+                registros.filter(
+                    function (registro) {
+                        return tipoNormalizado(
+                            registro.tipo_mantenimiento
+                        ) === "correctivo";
+                    }
+                ).length;
+
+            const soloRevision =
+                registros.filter(
+                    function (registro) {
+                        return tipoNormalizado(
+                            registro.tipo_mantenimiento
+                        ) === "solo_revision";
+                    }
+                ).length;
+
+            document.getElementById(
+                "totalMaquinas"
+            ).textContent =
+                maquinas.length;
+
+            document.getElementById(
+                "totalOperables"
+            ).textContent =
+                totalOperables;
+
+            document.getElementById(
+                "totalRevision"
+            ).textContent =
+                totalRevision;
+
+            document.getElementById(
+                "totalFallas"
+            ).textContent =
+                totalFallas;
+
+            document.getElementById(
+                "totalMantenimientos"
+            ).textContent =
+                preventivos + correctivos;
+
+            document.getElementById(
+                "totalPreventivos"
+            ).textContent =
+                preventivos;
+
+            document.getElementById(
+                "totalCorrectivos"
+            ).textContent =
+                correctivos;
+
+            document.getElementById(
+                "totalSoloRevision"
+            ).textContent =
+                soloRevision;
+        }
+
+        function mostrarTabla(
+            listaMaquinas
+        ) {
+            const tbody =
+                document.getElementById(
+                    "tablaBody"
+                );
+
+            const tabla =
+                document.getElementById(
+                    "tablaMantenimientos"
+                );
+
+            const estado =
+                document.getElementById(
+                    "estado"
+                );
+
+            tbody.innerHTML = "";
+
+            if (
+                !listaMaquinas.length
+            ) {
+                tabla.style.display =
+                    "none";
+
+                estado.style.display =
+                    "block";
+
+                estado.textContent =
+                    "No se encontraron máquinas.";
+
+                return;
+            }
+
+            listaMaquinas.forEach(
+                function (maquina) {
+                    const registrosMaquina =
+                        registros.filter(
+                            function (registro) {
+                                return String(
+                                    registro.codigo_maquina
+                                ) ===
+                                String(
+                                    maquina.codigo
+                                );
+                            }
+                        );
+
+                    const preventivos =
+                        registrosMaquina.filter(
+                            function (registro) {
+                                return tipoNormalizado(
+                                    registro.tipo_mantenimiento
+                                ) === "preventivo";
+                            }
+                        ).length;
+
+                    const correctivos =
+                        registrosMaquina.filter(
+                            function (registro) {
+                                return tipoNormalizado(
+                                    registro.tipo_mantenimiento
+                                ) === "correctivo";
+                            }
+                        ).length;
+
+                    const soloRevision =
+                        registrosMaquina.filter(
+                            function (registro) {
+                                return tipoNormalizado(
+                                    registro.tipo_mantenimiento
+                                ) === "solo_revision";
+                            }
+                        ).length;
+
+                    const total =
+                        preventivos +
+                        correctivos;
+
+                    const estadoActual =
+                        estadoNormalizado(
+                            maquina.estado_equipo
+                        );
+
+                    const fila =
+                        document.createElement(
+                            "tr"
+                        );
+
+                    fila.innerHTML = `
+                        <td class="codigo">
+                            ${escaparHTML(
+                                maquina.codigo
+                            )}
+                        </td>
+
+                        <td>
+                            ${escaparHTML(
+                                maquina.tipo_activo ||
+                                maquina.modelo ||
+                                "Máquina"
+                            )}
+
+                            <br>
+
+                            <small>
+                                ${escaparHTML(
+                                    maquina.marca ||
+                                    ""
+                                )}
+
+                                ${
+                                    maquina.modelo
+                                        ? " " +
+                                          escaparHTML(
+                                              maquina.modelo
+                                          )
+                                        : ""
+                                }
+                            </small>
+                        </td>
+
+                        <td>
+                            <span class="estado-badge ${claseEstado(estadoActual)}">
+                                ${nombreEstado(estadoActual)}
+                            </span>
+                        </td>
+
+                        <td class="numero preventivo">
+                            ${preventivos}
+                        </td>
+
+                        <td class="numero correctivo">
+                            ${correctivos}
+                        </td>
+
+                        <td class="numero revision">
+                            ${soloRevision}
+                        </td>
+
+                        <td class="numero total">
+                            ${total}
+                        </td>
+
+                        <td>
+                            ${
+                                esAdministrador()
+                                    ? `
+                                        <select
+                                            class="selector-estado"
+                                            id="estado_${escaparHTML(maquina.codigo)}"
+                                        >
+                                            <option
+                                                value="operable"
+                                                ${estadoActual === "operable" ? "selected" : ""}
+                                            >
+                                                🟢 Operable
+                                            </option>
+
+                                            <option
+                                                value="en_revision"
+                                                ${estadoActual === "en_revision" ? "selected" : ""}
+                                            >
+                                                🟡 En revisión
+                                            </option>
+
+                                            <option
+                                                value="presenta_fallas"
+                                                ${estadoActual === "presenta_fallas" ? "selected" : ""}
+                                            >
+                                                🔴 Presenta fallas
+                                            </option>
+                                        </select>
+
+                                        <button
+                                            type="button"
+                                            class="boton-actualizar"
+                                            onclick="actualizarEstado('${escaparHTML(maquina.codigo)}')"
+                                        >
+                                            Guardar
+                                        </button>
+                                    `
+                                    : `
+                                        <span class="texto-pequeno">
+                                            Vista de consulta
+                                        </span>
+                                    `
+                            }
+
+                            <br>
+
+                            <a
+                                class="boton-historial"
+                                href="buscar-maquina.html"
+                                onclick="
+                                    sessionStorage.setItem(
+                                        'signia_codigo_busqueda',
+                                        '${escaparHTML(maquina.codigo)}'
+                                    );
+                                "
+                            >
+                                Ver historial
+                            </a>
+                        </td>
+                    `;
+
+                    tbody.appendChild(
+                        fila
+                    );
+                }
+            );
+
+            tabla.style.display =
+                "table";
+
+            estado.style.display =
+                "none";
+        }
+
+        async function actualizarEstado(
+            codigo
+        ) {
+            const token =
+                obtenerToken();
+
+            const selector =
+                document.getElementById(
+                    "estado_" + codigo
+                );
+
+            if (!token) {
+                window.location.href =
+                    "index.html";
+
+                return;
+            }
+
+            if (!selector) {
+                alert(
+                    "No se encontró el selector de estado."
+                );
+
+                return;
+            }
+
+            const nuevoEstado =
+                selector.value;
+
+            const confirmar =
+                confirm(
+                    "¿Deseas actualizar el estado de la máquina " +
+                    codigo +
+                    " a " +
+                    nombreEstado(nuevoEstado) +
+                    "?"
+                );
+
+            if (!confirmar) {
+                return;
+            }
+
+            try {
+                const respuesta =
+                    await fetch(
+                        API_URL +
+                        "/maquinas/" +
+                        encodeURIComponent(
+                            codigo
+                        ) +
+                        "/estado",
+                        {
+                            method:
+                                "PATCH",
+
+                            headers: {
+                                Authorization:
+                                    "Bearer " +
+                                    token,
+
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    {
+                                        estado_equipo:
+                                            nuevoEstado
+                                    }
+                                )
+                        }
+                    );
+
+                const resultado =
+                    await respuesta.json();
+
+                if (
+                    !respuesta.ok
+                ) {
+                    throw new Error(
+                        resultado.detail ||
+                        "No se pudo actualizar el estado."
+                    );
+                }
+
+                maquinas =
+                    maquinas.map(
+                        function (maquina) {
+                            if (
+                                String(
+                                    maquina.codigo
+                                ) ===
+                                String(
+                                    codigo
+                                )
+                            ) {
+                                return {
+                                    ...maquina,
+                                    estado_equipo:
+                                        nuevoEstado
+                                };
+                            }
+
+                            return maquina;
+                        }
+                    );
+
+                mostrarResumen();
+
+                mostrarTabla(
+                    maquinas
+                );
+
+                alert(
+                    "Estado actualizado correctamente."
+                );
+
+            } catch (error) {
+                alert(
+                    "Ocurrió un error: " +
+                    error.message
+                );
+            }
+        }
+
+        document
+            .getElementById(
+                "buscadorMaquinas"
+            )
+            .addEventListener(
+                "input",
+                function () {
+                    const texto =
+                        this.value
+                            .trim()
+                            .toLowerCase();
+
+                    const filtradas =
+                        maquinas.filter(
+                            function (maquina) {
+                                return (
+                                    String(
+                                        maquina.codigo
+                                    )
+                                        .toLowerCase()
+                                        .includes(
+                                            texto
+                                        ) ||
+
+                                    String(
+                                        maquina.marca ||
+                                        ""
+                                    )
+                                        .toLowerCase()
+                                        .includes(
+                                            texto
+                                        ) ||
+
+                                    String(
+                                        maquina.modelo ||
+                                        ""
+                                    )
+                                        .toLowerCase()
+                                        .includes(
+                                            texto
+                                        ) ||
+
+                                    String(
+                                        maquina.tipo_activo ||
+                                        ""
+                                    )
+                                        .toLowerCase()
+                                        .includes(
+                                            texto
+                                        )
+                                );
+                            }
+                        );
+
+                    mostrarTabla(
+                        filtradas
+                    );
+                }
+            );
+
+        document.addEventListener(
+            "signiaSesionLista",
+            function (evento) {
+                const usuario =
+                    evento.detail.usuario;
+
+                usuarioActual =
+                    usuario;
+
+                if (
+                    usuario.nombre
+                ) {
+                    document.getElementById(
+                        "avatarUsuario"
+                    ).textContent =
+                        usuario.nombre
+                            .trim()
+                            .split(/\s+/)
+                            .slice(0, 2)
+                            .map(
+                                function (parte) {
+                                    return parte[0];
+                                }
+                            )
+                            .join("")
+                            .toUpperCase();
+                }
+
+                document.getElementById(
+                    "nombreUsuario"
+                ).textContent =
+                    usuario.nombre ||
+                    "Usuario";
+
+                document.getElementById(
+                    "rolUsuario"
+                ).textContent =
+                    usuario.rol ||
+                    "";
+
+                mostrarTabla(
+                    maquinas
+                );
+            }
+        );
+
+        usuarioActual =
+            obtenerUsuarioGuardado();
+
+        cargarDatos();
+    </script>
+
+</body>
+
+</html>

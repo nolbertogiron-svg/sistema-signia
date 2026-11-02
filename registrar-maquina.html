@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Registrar mantenimiento | SIGNIA</title>
+
+    <link
+        rel="stylesheet"
+        href="css/maquinas.css"
+    >
+
+    <script
+        src="js/sesion.js"
+        defer
+    ></script>
+
+    <style>
+        .busqueda-codigo {
+            display: flex;
+            gap: 12px;
+        }
+
+        .busqueda-codigo input {
+            flex: 1;
+        }
+
+        .boton-buscar {
+            border: 0;
+            border-radius: 12px;
+            background: #5e9ed2;
+            color: #ffffff;
+            padding: 0 25px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton-buscar:disabled,
+        .boton-guardar:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .mensaje-codigo {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .mensaje-codigo.correcto {
+            color: #21845a;
+        }
+
+        .mensaje-codigo.error {
+            color: #b94242;
+        }
+
+        input[readonly] {
+            background: #edf3f7;
+            color: #5e7483;
+            cursor: not-allowed;
+        }
+
+        .aviso-fecha {
+            font-size: 12px;
+            color: #8399a8;
+            margin-top: 7px;
+        }
+
+        .selector-archivos {
+            display: block;
+            border: 2px dashed #c7d8e5;
+            border-radius: 14px;
+            padding: 22px;
+            text-align: center;
+            cursor: pointer;
+            background: #f8fbfd;
+            transition: 0.2s ease;
+        }
+
+        .selector-archivos:hover {
+            border-color: #5e9ed2;
+            background: #f1f7fb;
+        }
+
+        .selector-archivos span {
+            display: block;
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .selector-archivos strong,
+        .selector-archivos small {
+            display: block;
+        }
+
+        .selector-archivos small {
+            margin-top: 5px;
+            color: #8399a8;
+        }
+
+        .lista-archivos {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #5e7483;
+            line-height: 1.6;
+        }
+
+        .seccion-documentos {
+            display: none;
+        }
+
+        .nota-evidencia {
+            font-size: 12px;
+            color: #8399a8;
+            margin-top: 8px;
+        }
+
+        .archivo-seleccionado {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            margin-bottom: 8px;
+            background: #edf5fa;
+            border-radius: 10px;
+            color: #214b68;
+        }
+
+        .archivo-seleccionado span {
+            word-break: break-word;
+        }
+
+        .boton-quitar-archivo {
+            border: 0;
+            border-radius: 8px;
+            padding: 5px 10px;
+            background: #b94242;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .contenedor-fallas {
+            margin-top: 10px;
+        }
+
+        .fila-falla {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .fila-falla input {
+            flex: 1;
+        }
+
+        .boton-agregar-falla {
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 16px;
+            background: #b94242;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .lista-fallas {
+            margin-top: 10px;
+            display: grid;
+            gap: 8px;
+        }
+
+        .item-falla {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            background: #fde8e8;
+            color: #8a2e2e;
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+
+        .boton-quitar-falla {
+            border: 0;
+            border-radius: 8px;
+            background: #8a2e2e;
+            color: white;
+            font-weight: bold;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        @media (max-width: 700px) {
+            .busqueda-codigo {
+                flex-direction: column;
+            }
+
+            .boton-buscar {
+                padding: 13px;
+            }
+
+            .archivo-seleccionado {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="css/interfaz.css">
+    <script src="js/interfaz.js"></script>
+    <script src="js/registro-secciones.js" defer></script>
+    <script src="js/menu-movil.js" defer></script>
+</head>
+    <script src="js/config.js"></script>
+<body>
+
+    <aside class="menu-lateral">
+
+        <div class="contenedor-logo">
+            <img
+                src="css/imagenes/logo-signia.png"
+                alt="Logo de SIGNIA"
+                class="logo"
+            >
+
+            <h2>SIGNIA</h2>
+
+            <p>Gestión de Maquinarias</p>
+        </div>
+
+        <nav class="menu">
+
+            <a
+                href="panel.html"
+                class="opcion"
+            >
+                🏠 Panel principal
+            </a>
+
+            <a
+                href="registrar-maquina.html"
+                class="opcion activa"
+            >
+                ⚙️ Registrar mantenimiento
+            </a>
+
+            <a
+                href="buscar-maquina.html"
+                class="opcion"
+            >
+                🔍 Buscar por código
+            </a>
+
+            <a
+                href="mantenimientos.html"
+                class="opcion"
+            >
+                🛠️ Mantenimientos
+            </a>
+
+            <a
+                href="reportes.html"
+                class="opcion"
+            >
+                📊 Reportes
+            </a>
+
+            <a
+                href="usuarios.html"
+                class="opcion"
+                id="opcionUsuarios"
+            >
+                👥 Usuarios
+            </a>
+
+        </nav>
+
+        <a
+            href="index.html"
+            id="cerrarSesion"
+            class="cerrar-sesion"
+        >
+            Cerrar sesión
+        </a>
+
+    </aside>
+
+    <main class="contenido-principal">
+
+        <header class="barra-superior">
+
+            <div>
+                <a
+                    href="panel.html"
+                    class="volver"
+                >
+                    ← Volver al panel
+                </a>
+
+                <h1>Registrar mantenimiento</h1>
+
+                <p>
+                    Busca el equipo por código y registra la evidencia.
+                </p>
+            </div>
+
+            <div class="datos-usuario">
+
+                <div
+                    class="avatar"
+                    id="avatarUsuario"
+                >
+                    --
+                </div>
+
+                <div>
+                    <strong id="nombreUsuario">
+                        Cargando usuario...
+                    </strong>
+
+                    <span id="rolUsuario">
+                        Cargando rol...
+                    </span>
+                </div>
+
+            </div>
+
+        </header>
+
+        <form
+            class="formulario"
+            id="formularioMaquina"
+        >
+
+            <section class="tarjeta">
+
+                <div class="titulo-tarjeta">
+                    <h2>Buscar equipo</h2>
+
+                    <p>
+                        Escribe el código de la máquina.
+                    </p>
+                </div>
+
+                <div class="grupo-campo">
+
+                    <label for="codigo">
+                        Código *
+                    </label>
+
+                    <div class="busqueda-codigo">
+
+                        <input
+                            type="text"
+                            id="codigo"
+                            placeholder="Ejemplo: 2590"
+                            autocomplete="off"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="boton-buscar"
+                            id="buscarCodigo"
+                        >
+                            Buscar
+                        </button>
+
+                    </div>
+
+                    <p
+                        id="mensajeCodigo"
+                        class="mensaje-codigo"
+                    ></p>
+
+                </div>
+
+            </section>
+
+            <section class="tarjeta">
+
+                <div class="titulo-tarjeta">
+                    <h2>Datos automáticos del equipo</h2>
+
+                    <p>
+                        Estos datos provienen del sistema y no pueden modificarse aquí.
+                    </p>
+                </div>
+
+                <div class="campos">
+
+                    <div class="grupo-campo">
+                        <label for="seccion">Sección</label>
+                        <input id="seccion" readonly>
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label for="local">Local</label>
+                        <input id="local" readonly>
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label for="proveedor">Proveedor</label>
+                        <input id="proveedor" readonly>
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label for="tipoActivo">Tipo de activo</label>
+                        <input id="tipoActivo" readonly>
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label for="marca">Marca</label>
+                        <input id="marca" readonly>
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label for="serie">Serie</label>
+                        <input id="serie" readonly>
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label for="modelo">Modelo</label>
+                        <input id="modelo" readonly>
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label for="ubicacionReferencia">
+                            Ubicación del Excel
+                        </label>
+
+                        <input
+                            id="ubicacionReferencia"
+                            readonly
+                        >
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="tarjeta">
+
+                <div class="titulo-tarjeta">
+                    <h2>Datos del registro</h2>
+
+                    <p>
+                        Completa la ubicación actual, el tipo de registro y el estado de la máquina.
+                    </p>
+                </div>
+
+                <div class="campos">
+
+                    <div class="grupo-campo">
+
+                        <label for="tipoMantenimiento">
+                            Tipo de mantenimiento *
+                        </label>
+
+                        <select
+                            id="tipoMantenimiento"
+                            required
+                        >
+                            <option value="">
+                                Selecciona una opción
+                            </option>
+
+                            <option value="preventivo">
+                                Preventivo
+                            </option>
+
+                            <option value="correctivo">
+                                Correctivo
+                            </option>
+
+                            <option value="solo_revision">
+                                Solo revisión
+                            </option>
+                        </select>
+
+                    </div>
+
+                    <div class="grupo-campo">
+
+                        <label for="estadoEquipo">
+                            Estado de la máquina *
+                        </label>
+
+                        <select
+                            id="estadoEquipo"
+                            required
+                        >
+                            <option value="operable">
+                                🟢 Operable
+                            </option>
+
+                            <option value="en_revision">
+                                🟡 En revisión
+                            </option>
+
+                            <option value="presenta_fallas">
+                                🔴 Presenta fallas
+                            </option>
+                        </select>
+
+                    <div class="grupo-campo">
+
+    <label for="ubicacion">
+        Ubicación actual *
+    </label>
+
+    <select
+        id="ubicacion"
+        required
+    >
+        <option value="">
+            Selecciona una sede
+        </option>
+
+        <option value="S1 - Frutales 215, Ate">
+            S1 - Frutales 215, Ate
+        </option>
+
+        <option value="S3 - Pasaje Ticino 160, Santa Anita">
+            S3 - Pasaje Ticino 160, Santa Anita
+        </option>
+
+        <option value="S4 - José de la Mar 377, San Luis">
+            S4 - José de la Mar 377, San Luis
+        </option>
+
+        <option value="S5 - Urb. Industrial Las Praderas, Lurín">
+            S5 - Urb. Industrial Las Praderas, Lurín
+        </option>
+
+        <option value="S7 - Frutales 220, Ate">
+            S7 - Frutales 220, Ate
+        </option>
+
+        <option value="S8 - Av. Gasoducto (Latam), Lurín">
+            S8 - Av. Gasoducto (Latam), Lurín
+        </option>
+    </select>
+
+</div>
+
+                    <div class="grupo-campo">
+
+                        <label for="fechaHora">
+                            Fecha y hora automática
+                        </label>
+
+                        <input
+                            id="fechaHora"
+                            readonly
+                        >
+
+                        <p class="aviso-fecha">
+                            Se colocará automáticamente y no puede modificarse.
+                        </p>
+
+                    </div>
+
+                    <div class="grupo-campo campo-completo">
+
+                        <label for="comentario">
+                            Comentario u observación *
+                        </label>
+
+                        <textarea
+                            id="comentario"
+                            placeholder="Describe el mantenimiento, hallazgo o trabajo realizado"
+                            required
+                        ></textarea>
+
+                    </div>
+<div class="grupo-campo campo-completo">
+
+    <label for="descripcionFalla">
+        Fallas encontradas
+    </label>
+
+    <div class="contenedor-fallas">
+
+        <div class="fila-falla">
+
+            <input
+                type="text"
+                id="descripcionFalla"
+                placeholder="Ejemplo: batería descargada, rueda dañada, sensor no responde"
+            >
+
+            <button
+                type="button"
+                id="agregarFalla"
+                class="boton-agregar-falla"
+            >
+                Agregar
+            </button>
+
+        </div>
+
+        <div
+            id="listaFallas"
+            class="lista-fallas"
+        >
+            No hay fallas agregadas.
+        </div>
+
+        <p class="nota-evidencia">
+            Si seleccionas “Presenta fallas”, agrega al menos una falla pendiente.
+        </p>
+
+    </div>
+
+</div>
+
+                </div>
+
+            </section>
+
+            <section class="tarjeta">
+
+                <div class="titulo-tarjeta">
+                    <h2>Evidencias del mantenimiento</h2>
+
+                    <p>
+                        Puedes adjuntar varias fotografías y videos. En celular puedes agregarlos uno por uno.
+                    </p>
+                </div>
+
+                <div class="campos">
+
+                    <div class="grupo-campo campo-completo">
+
+                        <label
+                            for="fotografias"
+                            class="selector-archivos"
+                        >
+                            <span>📷</span>
+                            <strong>Agregar fotografías</strong>
+
+                            <small>
+                                Puedes seleccionar una foto, luego otra y así sucesivamente.
+                                JPG, JPEG o PNG. Máximo 5 MB por fotografía.
+                            </small>
+                        </label>
+
+                        <input
+                            type="file"
+                            id="fotografias"
+                            accept="image/png,image/jpeg"
+                            multiple
+                            hidden
+                        >
+
+                        <div
+                            id="listaFotografias"
+                            class="lista-archivos"
+                        >
+                            Ninguna fotografía seleccionada.
+                        </div>
+
+                    </div>
+
+                    <div class="grupo-campo campo-completo">
+
+                        <label
+                            for="videos"
+                            class="selector-archivos"
+                        >
+                            <span>🎥</span>
+                            <strong>Agregar videos</strong>
+
+                            <small>
+                                Puedes seleccionar un video, luego otro y así sucesivamente.
+                                MP4 o WebM. Máximo 50 MB por video.
+                            </small>
+                        </label>
+
+                        <input
+                            type="file"
+                            id="videos"
+                            accept="video/mp4,video/webm"
+                            multiple
+                            hidden
+                        >
+
+                        <div
+                            id="listaVideos"
+                            class="lista-archivos"
+                        >
+                            Ningún video seleccionado.
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="grupo-campo campo-completo seccion-documentos"
+                        id="seccionDocumentos"
+                    >
+
+                        <label
+                            for="documentos"
+                            class="selector-archivos"
+                        >
+                            <span>📄</span>
+                            <strong>Agregar documentos PDF</strong>
+
+                            <small>
+                                Solo para proveedores. Puedes agregar un PDF, luego otro y así sucesivamente.
+                                Máximo 10 MB por PDF.
+                            </small>
+                        </label>
+
+                        <input
+                            type="file"
+                            id="documentos"
+                            accept="application/pdf"
+                            multiple
+                            hidden
+                        >
+
+                        <div
+                            id="listaDocumentos"
+                            class="lista-archivos"
+                        >
+                            Ningún documento seleccionado.
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <p class="nota-evidencia">
+                    Las evidencias se almacenarán de forma segura en Supabase Storage.
+                </p>
+
+            </section>
+
+            <div class="botones">
+
+                <a
+                    href="panel.html"
+                    class="boton-cancelar"
+                >
+                    Cancelar
+                </a>
+
+                <button
+                    type="submit"
+                    class="boton-guardar"
+                >
+                    Guardar registro
+                </button>
+
+            </div>
+
+        </form>
+
+    </main>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+
+        const automaticos = [
+            "seccion",
+            "local",
+            "proveedor",
+            "tipoActivo",
+            "marca",
+            "serie",
+            "modelo",
+            "ubicacionReferencia"
+        ];
+
+        const formulario =
+            document.getElementById("formularioMaquina");
+
+        const codigo =
+            document.getElementById("codigo");
+
+        const mensaje =
+            document.getElementById("mensajeCodigo");
+
+        const fotografias =
+            document.getElementById("fotografias");
+
+        const videos =
+            document.getElementById("videos");
+
+        const documentos =
+            document.getElementById("documentos");
+
+        const seccionDocumentos =
+            document.getElementById("seccionDocumentos");
+
+        const listaFotografias =
+            document.getElementById("listaFotografias");
+
+        const listaVideos =
+            document.getElementById("listaVideos");
+
+        const listaDocumentos =
+            document.getElementById("listaDocumentos");
+
+        const botonGuardar =
+            formulario.querySelector(".boton-guardar");
+
+        const botonBuscar =
+            document.getElementById("buscarCodigo");
+
+        const estadoEquipo =
+            document.getElementById("estadoEquipo");
+
+        let fotografiasSeleccionadas = [];
+        let videosSeleccionados = [];
+        let documentosSeleccionados = [];
+        let fallasSeleccionadas = [];
+
+        function tokenActual() {
+            return (
+                sessionStorage.getItem("signia_token") ||
+                localStorage.getItem("signia_token")
+            );
+        }
+
+        function usuarioActualGuardado() {
+            const texto =
+                sessionStorage.getItem("signia_usuario") ||
+                localStorage.getItem("signia_usuario");
+
+            if (!texto) {
+                return null;
+            }
+
+            try {
+                return JSON.parse(texto);
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function fechaActual() {
+            document.getElementById("fechaHora").value =
+                new Intl.DateTimeFormat(
+                    "es-PE",
+                    {
+                        dateStyle: "short",
+                        timeStyle: "medium"
+                    }
+                ).format(new Date());
+        }
+
+        function limpiarMaquina() {
+            automaticos.forEach(
+                function (id) {
+                    document.getElementById(id).value = "";
+                }
+            );
+        }
+
+        function aviso(texto, tipo = "") {
+            mensaje.textContent = texto;
+
+            mensaje.className =
+                "mensaje-codigo " + tipo;
+        }
+
+        function cerrarSesionLocal() {
+            sessionStorage.clear();
+
+            localStorage.removeItem("signia_token");
+            localStorage.removeItem("signia_usuario");
+
+            window.location.replace("index.html");
+        }
+
+        function escaparHTML(valor) {
+            const elemento =
+                document.createElement("div");
+
+            elemento.textContent =
+                valor === null ||
+                valor === undefined
+                    ? ""
+                    : String(valor);
+
+            return elemento.innerHTML;
+        }
+
+        function validarArchivoIndividual(
+            archivo,
+            tiposPermitidos,
+            limiteBytes,
+            descripcion
+        ) {
+            if (!tiposPermitidos.includes(archivo.type)) {
+                alert(
+                    descripcion +
+                    ' "' +
+                    archivo.name +
+                    '" tiene un formato no permitido.'
+                );
+
+                return false;
+            }
+
+            if (archivo.size > limiteBytes) {
+                const limiteMB =
+                    Math.round(
+                        limiteBytes / (1024 * 1024)
+                    );
+
+                alert(
+                    descripcion +
+                    ' "' +
+                    archivo.name +
+                    '" supera los ' +
+                    limiteMB +
+                    " MB."
+                );
+
+                return false;
+            }
+
+            return true;
+        }
+
+        function archivoRepetido(
+            lista,
+            archivo
+        ) {
+            return lista.some(
+                function (item) {
+                    return (
+                        item.name === archivo.name &&
+                        item.size === archivo.size &&
+                        item.lastModified === archivo.lastModified
+                    );
+                }
+            );
+        }
+
+        function mostrarListaAcumulada(
+            lista,
+            contenedor,
+            textoVacio,
+            tipo
+        ) {
+            if (lista.length === 0) {
+                contenedor.textContent =
+                    textoVacio;
+
+                return;
+            }
+
+            contenedor.innerHTML =
+                lista.map(
+                    function (archivo, index) {
+                        const mb =
+                            (
+                                archivo.size /
+                                (1024 * 1024)
+                            ).toFixed(2);
+
+                        return `
+                            <div class="archivo-seleccionado">
+                                <span>
+                                    ${index + 1}. ${escaparHTML(archivo.name)} (${mb} MB)
+                                </span>
+
+                                <button
+                                    type="button"
+                                    class="boton-quitar-archivo"
+                                    onclick="quitarArchivoAcumulado('${tipo}', ${index})"
+                                >
+                                    Quitar
+                                </button>
+                            </div>
+                        `;
+                    }
+                ).join("");
+        }
+function mostrarFallasSeleccionadas() {
+    const listaFallas = document.getElementById("listaFallas");
+
+    if (fallasSeleccionadas.length === 0) {
+        listaFallas.textContent = "No hay fallas agregadas.";
+        return;
+    }
+
+    listaFallas.innerHTML = fallasSeleccionadas.map(
+        function (falla, index) {
+            return `
+                <div class="item-falla">
+                    <span>
+                        ${index + 1}. ${escaparHTML(falla)}
+                    </span>
+
+                    <button
+                        type="button"
+                        class="boton-quitar-falla"
+                        onclick="quitarFallaSeleccionada(${index})"
+                    >
+                        Quitar
+                    </button>
+                </div>
+            `;
+        }
+    ).join("");
+}
+
+
+function agregarFallaSeleccionada() {
+    const campoFalla = document.getElementById("descripcionFalla");
+
+    const descripcion = campoFalla.value.trim();
+
+    if (!descripcion) {
+        alert("Escribe la descripción de la falla.");
+        return;
+    }
+
+    fallasSeleccionadas.push(descripcion);
+
+    campoFalla.value = "";
+
+    mostrarFallasSeleccionadas();
+}
+
+
+function quitarFallaSeleccionada(index) {
+    fallasSeleccionadas.splice(index, 1);
+
+    mostrarFallasSeleccionadas();
+}
+        function quitarArchivoAcumulado(
+            tipo,
+            index
+        ) {
+            if (tipo === "fotografias") {
+                fotografiasSeleccionadas.splice(
+                    index,
+                    1
+                );
+
+                mostrarListaAcumulada(
+                    fotografiasSeleccionadas,
+                    listaFotografias,
+                    "Ninguna fotografía seleccionada.",
+                    "fotografias"
+                );
+            }
+
+            if (tipo === "videos") {
+                videosSeleccionados.splice(
+                    index,
+                    1
+                );
+
+                mostrarListaAcumulada(
+                    videosSeleccionados,
+                    listaVideos,
+                    "Ningún video seleccionado.",
+                    "videos"
+                );
+            }
+
+            if (tipo === "documentos") {
+                documentosSeleccionados.splice(
+                    index,
+                    1
+                );
+
+                mostrarListaAcumulada(
+                    documentosSeleccionados,
+                    listaDocumentos,
+                    "Ningún documento seleccionado.",
+                    "documentos"
+                );
+            }
+        }
+
+        function agregarArchivosAcumulados(
+            input,
+            lista,
+            contenedor,
+            textoVacio,
+            tiposPermitidos,
+            limiteBytes,
+            descripcion,
+            tipo
+        ) {
+            const archivos =
+                Array.from(
+                    input.files || []
+                );
+
+            archivos.forEach(
+                function (archivo) {
+                    const valido =
+                        validarArchivoIndividual(
+                            archivo,
+                            tiposPermitidos,
+                            limiteBytes,
+                            descripcion
+                        );
+
+                    if (!valido) {
+                        return;
+                    }
+
+                    if (
+                        !archivoRepetido(
+                            lista,
+                            archivo
+                        )
+                    ) {
+                        lista.push(
+                            archivo
+                        );
+                    }
+                }
+            );
+
+            input.value = "";
+
+            mostrarListaAcumulada(
+                lista,
+                contenedor,
+                textoVacio,
+                tipo
+            );
+        }
+
+        async function buscarEquipo() {
+            const clave =
+                codigo.value.trim();
+
+            const token =
+                tokenActual();
+
+            limpiarMaquina();
+
+            if (!token) {
+                cerrarSesionLocal();
+
+                return false;
+            }
+
+            if (!clave) {
+                aviso(
+                    "Ingresa un código.",
+                    "error"
+                );
+
+                return false;
+            }
+
+            botonBuscar.disabled = true;
+            botonBuscar.textContent = "Buscando...";
+
+            aviso("Buscando máquina...");
+
+            try {
+                const respuesta =
+                    await fetch(
+                        API_URL +
+                        "/maquinas/" +
+                        encodeURIComponent(clave),
+                        {
+                            headers: {
+                                "Authorization":
+                                    "Bearer " + token
+                            }
+                        }
+                    );
+
+                if (
+                    respuesta.status === 401 ||
+                    respuesta.status === 403
+                ) {
+                    cerrarSesionLocal();
+
+                    return false;
+                }
+
+                if (!respuesta.ok) {
+                    aviso(
+                        "Código no encontrado.",
+                        "error"
+                    );
+
+                    return false;
+                }
+
+                const maquina =
+                    await respuesta.json();
+
+                document.getElementById("seccion").value =
+                    maquina.seccion || "";
+
+                document.getElementById("local").value =
+                    maquina.local || "";
+
+                document.getElementById("proveedor").value =
+                    maquina.proveedor || "No registrado";
+
+                document.getElementById("tipoActivo").value =
+                    maquina.tipo_activo || "";
+
+                document.getElementById("marca").value =
+                    maquina.marca || "";
+
+                document.getElementById("serie").value =
+                    maquina.serie || "";
+
+                document.getElementById("modelo").value =
+                    maquina.modelo || "";
+
+                document.getElementById("ubicacionReferencia").value =
+                    maquina.ubicacion_referencia || "";
+
+                aviso(
+                    "Máquina encontrada correctamente.",
+                    "correcto"
+                );
+
+                return true;
+
+            } catch (error) {
+                aviso(
+                    "No se pudo conectar con el servidor.",
+                    "error"
+                );
+
+                return false;
+
+            } finally {
+                botonBuscar.disabled = false;
+                botonBuscar.textContent = "Buscar";
+            }
+        }
+
+        botonBuscar.addEventListener(
+            "click",
+            buscarEquipo
+        );
+document.getElementById("agregarFalla").addEventListener(
+    "click",
+    agregarFallaSeleccionada
+);
+
+        codigo.addEventListener(
+            "change",
+            buscarEquipo
+        );
+
+        fotografias.addEventListener(
+            "change",
+            function () {
+                agregarArchivosAcumulados(
+                    this,
+                    fotografiasSeleccionadas,
+                    listaFotografias,
+                    "Ninguna fotografía seleccionada.",
+                    [
+                        "image/jpeg",
+                        "image/png"
+                    ],
+                    5 * 1024 * 1024,
+                    "La fotografía",
+                    "fotografias"
+                );
+            }
+        );
+
+        videos.addEventListener(
+            "change",
+            function () {
+                agregarArchivosAcumulados(
+                    this,
+                    videosSeleccionados,
+                    listaVideos,
+                    "Ningún video seleccionado.",
+                    [
+                        "video/mp4",
+                        "video/webm"
+                    ],
+                    50 * 1024 * 1024,
+                    "El video",
+                    "videos"
+                );
+            }
+        );
+
+        documentos.addEventListener(
+            "change",
+            function () {
+                agregarArchivosAcumulados(
+                    this,
+                    documentosSeleccionados,
+                    listaDocumentos,
+                    "Ningún documento seleccionado.",
+                    [
+                        "application/pdf"
+                    ],
+                    10 * 1024 * 1024,
+                    "El documento",
+                    "documentos"
+                );
+            }
+        );
+
+        formulario.addEventListener(
+            "submit",
+            async function (evento) {
+                evento.preventDefault();
+
+                const token =
+                    tokenActual();
+
+                if (!token) {
+                    cerrarSesionLocal();
+
+                    return;
+                }
+
+                const usuario =
+                    usuarioActualGuardado();
+
+                if (
+                    usuario &&
+                    usuario.rol === "administracion"
+                ) {
+                    alert(
+                        "Administración solo puede visualizar registros."
+                    );
+
+                    window.location.href =
+                        "panel.html";
+
+                    return;
+                }
+
+                if (!(await buscarEquipo())) {
+                    return;
+                }
+
+                const ubicacion =
+                    document.getElementById("ubicacion")
+                        .value
+                        .trim();
+
+                const comentario =
+                    document.getElementById("comentario")
+                        .value
+                        .trim();
+
+                const tipoMantenimiento =
+                    document.getElementById("tipoMantenimiento")
+                        .value;
+
+                const estadoSeleccionado =
+                    estadoEquipo.value;
+
+                if (!tipoMantenimiento) {
+                    alert(
+                        "Debes seleccionar el tipo de mantenimiento."
+                    );
+
+                    return;
+                }
+
+                if (!estadoSeleccionado) {
+                    alert(
+                        "Debes seleccionar el estado de la máquina."
+                    );
+
+                    return;
+                }
+
+                if (!ubicacion) {
+                    alert(
+                        "Debes ingresar la ubicación actual."
+                    );
+
+                    return;
+                }
+
+                if (!comentario) {
+                    alert(
+                        "Debes ingresar un comentario."
+                    );
+
+                    return;
+                }
+if (
+    estadoSeleccionado === "presenta_fallas" &&
+    fallasSeleccionadas.length === 0
+) {
+    alert(
+        "Si la máquina presenta fallas, debes agregar al menos una falla."
+    );
+
+    return;
+}
+
+                if (
+                    documentosSeleccionados.length > 0 &&
+                    (
+                        !usuario ||
+                        usuario.rol !== "proveedor"
+                    )
+                ) {
+                    alert(
+                        "Solo los proveedores pueden adjuntar documentos PDF."
+                    );
+
+                    return;
+                }
+
+                const datos =
+                    new FormData();
+
+                datos.append(
+                    "codigo_maquina",
+                    codigo.value.trim()
+                );
+
+                datos.append(
+                    "ubicacion_actual",
+                    ubicacion
+                );
+
+                datos.append(
+                    "comentario",
+                    comentario
+                );
+
+                datos.append(
+                    "tipo_mantenimiento",
+                    tipoMantenimiento
+                );
+
+                datos.append(
+                    "estado_equipo",
+                    estadoSeleccionado
+                );
+
+                fotografiasSeleccionadas.forEach(
+                    function (archivo) {
+                        datos.append(
+                            "fotografias",
+                            archivo
+                        );
+                    }
+                );
+
+                videosSeleccionados.forEach(
+                    function (archivo) {
+                        datos.append(
+                            "videos",
+                            archivo
+                        );
+                    }
+                );
+
+                if (
+                    usuario &&
+                    usuario.rol === "proveedor"
+                ) {
+                    documentosSeleccionados.forEach(
+                        function (archivo) {
+                            datos.append(
+                                "documentos",
+                                archivo
+                            );
+                        }
+                    );
+                }
+
+                botonGuardar.disabled = true;
+
+                botonGuardar.textContent =
+                    "Guardando...";
+
+                try {
+                    const respuesta =
+                        await fetch(
+                            API_URL + "/registros",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Authorization":
+                                        "Bearer " + token
+                                },
+
+                                body: datos
+                            }
+                        );
+
+                    const resultado =
+                        await respuesta.json();
+
+                    if (!respuesta.ok) {
+                        throw new Error(
+                            resultado.detail ||
+                            "No se pudo guardar."
+                        );
+                    }
+if (fallasSeleccionadas.length > 0) {
+    for (const falla of fallasSeleccionadas) {
+        const respuestaFalla = await fetch(
+            API_URL +
+            "/maquinas/" +
+            encodeURIComponent(codigo.value.trim()) +
+            "/fallas",
+            {
+                method: "POST",
+
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    descripcion: falla
+                })
+            }
+        );
+
+        const resultadoFalla = await respuestaFalla.json();
+
+        if (!respuestaFalla.ok) {
+            throw new Error(
+                resultadoFalla.detail ||
+                "El registro se guardó, pero no se pudo guardar una falla."
+            );
+        }
+    }
+}
+                    alert(
+                        "Registro guardado correctamente. ID: " +
+                        resultado.id
+                    );
+
+                    formulario.reset();
+
+                    limpiarMaquina();
+
+                    fotografiasSeleccionadas = [];
+                    videosSeleccionados = [];
+                    documentosSeleccionados = [];
+                    fallasSeleccionadas = [];
+                    mostrarFallasSeleccionadas();
+                    document.getElementById("descripcionFalla").value = "";
+
+                    listaFotografias.textContent =
+                        "Ninguna fotografía seleccionada.";
+
+                    listaVideos.textContent =
+                        "Ningún video seleccionado.";
+
+                    listaDocumentos.textContent =
+                        "Ningún documento seleccionado.";
+
+                    aviso("");
+
+                    fechaActual();
+
+                } catch (error) {
+                    alert(
+                        "Ocurrió un error: " +
+                        error.message
+                    );
+
+                } finally {
+                    botonGuardar.disabled = false;
+
+                    botonGuardar.textContent =
+                        "Guardar registro";
+                }
+            }
+        );
+
+        document.addEventListener(
+            "signiaSesionLista",
+            function (evento) {
+                const usuario =
+                    evento.detail.usuario;
+
+                const avatar =
+                    document.getElementById("avatarUsuario");
+
+                if (usuario.nombre) {
+                    avatar.textContent =
+                        usuario.nombre
+                            .trim()
+                            .split(/\s+/)
+                            .slice(0, 2)
+                            .map(
+                                function (parte) {
+                                    return parte[0];
+                                }
+                            )
+                            .join("")
+                            .toUpperCase();
+                }
+
+                document.getElementById("nombreUsuario").textContent =
+                    usuario.nombre || "Usuario";
+
+                document.getElementById("rolUsuario").textContent =
+                    usuario.rol || "";
+
+                if (
+                    usuario.rol === "proveedor"
+                ) {
+                    seccionDocumentos.style.display =
+                        "block";
+                } else {
+                    seccionDocumentos.style.display =
+                        "none";
+
+                    documentos.value = "";
+
+                    documentosSeleccionados = [];
+
+                    listaDocumentos.textContent =
+                        "Ningún documento seleccionado.";
+                }
+
+                if (
+                    usuario.rol === "administracion"
+                ) {
+                    alert(
+                        "Administración puede visualizar, pero no registrar mantenimientos."
+                    );
+
+                    window.location.replace(
+                        "panel.html"
+                    );
+                }
+            }
+        );
+
+        const usuarioInicial =
+            usuarioActualGuardado();
+
+        if (
+            usuarioInicial &&
+            usuarioInicial.rol === "proveedor"
+        ) {
+            seccionDocumentos.style.display =
+                "block";
+        }
+
+        fechaActual();
+
+        setInterval(
+            fechaActual,
+            1000
+        );
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,230 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #eef7ff, #dceeff);
+    color: #29465b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+
+.contenedor-login {
+    width: 100%;
+    max-width: 1050px;
+    min-height: 620px;
+    background-color: #ffffff;
+    border-radius: 28px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    box-shadow: 0 20px 50px rgba(69, 125, 175, 0.18);
+}
+
+/* PANEL IZQUIERDO */
+
+.panel-informativo {
+    background: linear-gradient(145deg, #9bc7ed, #bcdcf5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    position: relative;
+}
+
+.contenido-panel {
+    position: relative;
+    z-index: 2;
+}
+
+.logo {
+    width: 180px;
+    max-height: 100px;
+    object-fit: contain;
+    margin-bottom: 35px;
+}
+
+.panel-informativo h1 {
+    color: #173d5d;
+    font-size: 38px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.panel-informativo p {
+    color: #315a78;
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+.decoracion {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.25);
+    position: absolute;
+    right: -80px;
+    bottom: -160px;
+}
+
+/* PANEL DERECHO */
+
+.panel-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+}
+
+.formulario-login {
+    width: 100%;
+    max-width: 380px;
+}
+
+.formulario-login h2 {
+    color: #254e6d;
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.subtitulo {
+    color: #7690a3;
+    margin-bottom: 38px;
+    line-height: 1.5;
+}
+
+.grupo-campo {
+    margin-bottom: 23px;
+}
+
+.grupo-campo label {
+    display: block;
+    color: #385d77;
+    font-weight: 600;
+    margin-bottom: 9px;
+}
+
+.grupo-campo input {
+    width: 100%;
+    height: 52px;
+    border: 1px solid #c8ddeb;
+    border-radius: 13px;
+    padding: 0 16px;
+    font-size: 15px;
+    color: #29465b;
+    background-color: #f8fbfe;
+    outline: none;
+    transition: 0.2s;
+}
+
+.grupo-campo input:focus {
+    border-color: #79aedd;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(121, 174, 221, 0.15);
+}
+
+.campo-contrasena {
+    position: relative;
+}
+
+.campo-contrasena input {
+    padding-right: 75px;
+}
+
+.boton-mostrar {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #568dbc;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.opciones-login {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 28px;
+    font-size: 14px;
+}
+
+.recordar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #607d91;
+}
+
+.enlace {
+    color: #568dbc;
+    text-decoration: none;
+}
+
+.enlace:hover {
+    text-decoration: underline;
+}
+
+.boton-ingresar {
+    width: 100%;
+    height: 53px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #72aadd, #5c96ca);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.boton-ingresar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(72, 135, 190, 0.25);
+}
+
+.mensaje-seguridad {
+    margin-top: 25px;
+    color: #91a5b3;
+    font-size: 13px;
+    text-align: center;
+}
+
+/* ADAPTACIÓN PARA CELULAR */
+
+@media (max-width: 800px) {
+    body {
+        padding: 15px;
+    }
+
+    .contenedor-login {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-informativo {
+        min-height: 280px;
+        padding: 35px;
+    }
+
+    .panel-informativo h1 {
+        font-size: 29px;
+    }
+
+    .panel-login {
+        padding: 40px 28px;
+    }
+
+    .logo {
+        width: 140px;
+        margin-bottom: 20px;
+    }
+}

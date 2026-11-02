@@ -1,0 +1,582 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Iniciar sesión | SIGNIA</title>
+
+    <link
+        rel="stylesheet"
+        href="css/estilos.css"
+    >
+    <link rel="stylesheet" href="css/interfaz.css">
+    <script src="js/interfaz.js"></script>
+</head>
+    <script src="js/config.js"></script>
+<body>
+
+    <main class="contenedor-login">
+
+        <!-- PANEL INFORMATIVO -->
+
+        <section class="panel-informativo">
+
+            <div class="contenido-panel">
+
+                <div class="logo-temporal">
+
+                    <img
+                        src="css/imagenes/logo-signia.png"
+                        alt="Logo de SIGNIA"
+                        class="logo"
+                    >
+
+                </div>
+
+                <h1>
+                    Sistema de Gestión de Maquinarias
+                </h1>
+
+                <p>
+                    Registra mantenimientos, consulta
+                    información de las máquinas y mantén
+                    organizado el historial de fallas,
+                    observaciones y evidencias.
+                </p>
+
+                <div class="decoracion"></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PANEL DE INICIO DE SESIÓN -->
+
+        <section class="panel-login">
+
+            <form
+                class="formulario-login"
+                id="formularioLogin"
+            >
+
+                <h2>Bienvenido a SIGNIA</h2>
+
+                <p class="subtitulo">
+                    Ingresa con las credenciales
+                    de tu área para continuar.
+                </p>
+
+
+                <!-- CORREO -->
+
+                <div class="grupo-campo">
+
+                    <label for="usuario">
+                        Correo del área
+                    </label>
+
+                    <input
+                        type="email"
+                        id="usuario"
+                        name="usuario"
+                        placeholder="Ejemplo: operaciones@signia.com"
+                        autocomplete="username"
+                        maxlength="200"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- CONTRASEÑA -->
+
+                <div class="grupo-campo">
+
+                    <label for="contrasena">
+                        Contraseña
+                    </label>
+
+                    <div class="campo-contrasena">
+
+                        <input
+                            type="password"
+                            id="contrasena"
+                            name="contrasena"
+                            placeholder="Ingresa la contraseña"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            id="mostrarContrasena"
+                            class="boton-mostrar"
+                            aria-label="Mostrar contraseña"
+                        >
+                            Ver
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OPCIONES -->
+
+                <div class="opciones-login">
+
+                    <label class="recordar">
+
+                        <input
+                            type="checkbox"
+                            id="recordarme"
+                        >
+
+                        Recordarme
+
+                    </label>
+
+                    <a
+                        href="#"
+                        class="enlace"
+                        id="olvidasteContrasena"
+                    >
+                        ¿Olvidaste tu contraseña?
+                    </a>
+
+                </div>
+
+
+                <!-- BOTÓN DE INGRESO -->
+
+                <button
+                    type="submit"
+                    class="boton-ingresar"
+                    id="botonIngresar"
+                >
+                    Ingresar
+                </button>
+
+
+                <!-- MENSAJES -->
+
+                <p
+                    id="mensajeLogin"
+                    aria-live="polite"
+                ></p>
+
+
+                <p class="mensaje-seguridad">
+                    Acceso exclusivo para personal autorizado
+                </p>
+
+            </form>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        // =================================================
+        // CONFIGURACIÓN API
+        // =================================================
+
+        const API_URL = "http://127.0.0.1:8000";
+
+
+        // =================================================
+        // ELEMENTOS DEL FORMULARIO
+        // =================================================
+
+        const formulario =
+            document.getElementById(
+                "formularioLogin"
+            );
+
+        const campoUsuario =
+            document.getElementById(
+                "usuario"
+            );
+
+        const campoContrasena =
+            document.getElementById(
+                "contrasena"
+            );
+
+        const botonMostrar =
+            document.getElementById(
+                "mostrarContrasena"
+            );
+
+        const campoRecordarme =
+            document.getElementById(
+                "recordarme"
+            );
+
+        const mensajeLogin =
+            document.getElementById(
+                "mensajeLogin"
+            );
+
+        const botonIngresar =
+            document.getElementById(
+                "botonIngresar"
+            );
+
+        const enlaceRecuperar =
+            document.getElementById(
+                "olvidasteContrasena"
+            );
+
+
+        // =================================================
+        // ESTILOS DE MENSAJES
+        // =================================================
+
+        mensajeLogin.style.marginTop = "15px";
+        mensajeLogin.style.textAlign = "center";
+        mensajeLogin.style.fontWeight = "600";
+
+
+        // =================================================
+        // MOSTRAR Y OCULTAR CONTRASEÑA
+        // =================================================
+
+        botonMostrar.addEventListener(
+            "click",
+            function () {
+
+                const estaOculta =
+                    campoContrasena.type === "password";
+
+                campoContrasena.type =
+                    estaOculta
+                        ? "text"
+                        : "password";
+
+                botonMostrar.textContent =
+                    estaOculta
+                        ? "Ocultar"
+                        : "Ver";
+
+                botonMostrar.setAttribute(
+                    "aria-label",
+                    estaOculta
+                        ? "Ocultar contraseña"
+                        : "Mostrar contraseña"
+                );
+
+            }
+        );
+
+
+        // =================================================
+        // LIMPIAR SESIONES ANTERIORES
+        // =================================================
+
+        function limpiarSesionAnterior() {
+
+            const claves = [
+                "signia_token",
+                "signia_usuario",
+                "signia_trabajador"
+            ];
+
+            const almacenamientos = [
+                localStorage,
+                sessionStorage
+            ];
+
+            almacenamientos.forEach(
+                function (almacenamiento) {
+
+                    claves.forEach(
+                        function (clave) {
+
+                            almacenamiento.removeItem(
+                                clave
+                            );
+
+                        }
+                    );
+
+                }
+            );
+        }
+
+
+        // =================================================
+        // MOSTRAR MENSAJES
+        // =================================================
+
+        function mostrarMensaje(
+            texto,
+            tipo
+        ) {
+
+            mensajeLogin.textContent = texto;
+
+            if (tipo === "correcto") {
+
+                mensajeLogin.style.color =
+                    "#168a55";
+
+            } else if (tipo === "cargando") {
+
+                mensajeLogin.style.color =
+                    "#3979a8";
+
+            } else {
+
+                mensajeLogin.style.color =
+                    "#c0392b";
+
+            }
+
+        }
+
+
+        // =================================================
+        // RECUPERACIÓN DE CONTRASEÑA
+        // =================================================
+
+        enlaceRecuperar.addEventListener(
+            "click",
+            function (evento) {
+
+                evento.preventDefault();
+
+                mostrarMensaje(
+                    "Solicita al administrador de SIGNIA " +
+                    "el restablecimiento de la contraseña " +
+                    "de tu área.",
+                    "cargando"
+                );
+
+            }
+        );
+
+
+        // =================================================
+        // INICIAR SESIÓN DEL ÁREA
+        // =================================================
+
+        formulario.addEventListener(
+            "submit",
+            async function (evento) {
+
+                evento.preventDefault();
+
+                const correo =
+                    campoUsuario.value
+                        .trim()
+                        .toLowerCase();
+
+                const contrasena =
+                    campoContrasena.value;
+
+
+                // -----------------------------------------
+                // VALIDAR CAMPOS
+                // -----------------------------------------
+
+                if (!correo || !contrasena) {
+
+                    mostrarMensaje(
+                        "Completa el correo y la contraseña.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                // -----------------------------------------
+                // DESACTIVAR BOTÓN TEMPORALMENTE
+                // -----------------------------------------
+
+                botonIngresar.disabled = true;
+
+                botonIngresar.textContent =
+                    "Ingresando...";
+
+                mostrarMensaje(
+                    "Comprobando credenciales...",
+                    "cargando"
+                );
+
+
+                // -----------------------------------------
+                // PREPARAR FORMULARIO FASTAPI
+                // -----------------------------------------
+
+                const datosFormulario =
+                    new URLSearchParams();
+
+                datosFormulario.append(
+                    "username",
+                    correo
+                );
+
+                datosFormulario.append(
+                    "password",
+                    contrasena
+                );
+
+
+                // -----------------------------------------
+                // ENVIAR DATOS AL BACKEND
+                // -----------------------------------------
+
+                try {
+
+                    const respuesta = await fetch(
+                        `${API_URL}/auth/login`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/x-www-form-urlencoded"
+                            },
+
+                            body: datosFormulario
+                        }
+                    );
+
+
+                    const resultado =
+                        await respuesta.json();
+
+
+                    // -------------------------------------
+                    // VERIFICAR RESPUESTA
+                    // -------------------------------------
+
+                    if (!respuesta.ok) {
+
+                        throw new Error(
+                            typeof resultado.detail === "string"
+                                ? resultado.detail
+                                : "No se pudo iniciar sesión."
+                        );
+
+                    }
+
+
+                    if (
+                        !resultado.access_token ||
+                        !resultado.usuario
+                    ) {
+
+                        throw new Error(
+                            "El servidor devolvió " +
+                            "una respuesta incompleta."
+                        );
+
+                    }
+
+
+                    // -------------------------------------
+                    // LIMPIAR DATOS DE SESIONES ANTERIORES
+                    // -------------------------------------
+
+                    limpiarSesionAnterior();
+
+
+                    // -------------------------------------
+                    // SELECCIONAR ALMACENAMIENTO
+                    // -------------------------------------
+
+                    const almacenamiento =
+                        campoRecordarme.checked
+                            ? localStorage
+                            : sessionStorage;
+
+
+                    // -------------------------------------
+                    // GUARDAR TOKEN INICIAL DE LA CUENTA
+                    // -------------------------------------
+
+                    almacenamiento.setItem(
+                        "signia_token",
+                        resultado.access_token
+                    );
+
+                    almacenamiento.setItem(
+                        "signia_usuario",
+                        JSON.stringify(
+                            resultado.usuario
+                        )
+                    );
+
+
+                    /*
+                     * Todavía NO se guarda
+                     * signia_trabajador.
+                     *
+                     * Ese dato solo se guardará
+                     * después de completar
+                     * la identificación individual.
+                     */
+
+
+                    // -------------------------------------
+                    // MOSTRAR CONFIRMACIÓN
+                    // -------------------------------------
+
+                    mostrarMensaje(
+                        "Cuenta validada. " +
+                        "Ahora debes identificarte " +
+                        "como trabajador.",
+                        "correcto"
+                    );
+
+
+                    // -------------------------------------
+                    // REDIRIGIR A IDENTIFICACIÓN
+                    // -------------------------------------
+
+                    window.location.replace(
+                        "identificar-trabajador.html"
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Error al iniciar sesión:",
+                        error
+                    );
+
+                    mostrarMensaje(
+                        error.message ||
+                        "Ocurrió un error al iniciar sesión.",
+                        "error"
+                    );
+
+                    botonIngresar.disabled = false;
+
+                    botonIngresar.textContent =
+                        "Ingresar";
+
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

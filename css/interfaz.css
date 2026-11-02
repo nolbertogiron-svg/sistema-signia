@@ -1,0 +1,1720 @@
+/* Colores del modo claro */
+:root {
+    color-scheme: light;
+
+    --signia-fondo: #f3f6fb;
+    --signia-superficie: #ffffff;
+    --signia-texto: #20364d;
+    --signia-borde: #d8e2ef;
+}
+
+/* Colores del modo oscuro */
+:root[data-tema="oscuro"] {
+    color-scheme: dark;
+
+    --signia-fondo: #101923;
+    --signia-superficie: #1b2938;
+    --signia-texto: #e4edf7;
+    --signia-borde: #3b5067;
+}
+
+body {
+    background: var(--signia-fondo);
+}
+
+/* Menú lateral */
+.menu-lateral {
+    background: linear-gradient(175deg, #123f78, #09284e);
+    color: #ffffff;
+    overflow-y: auto;
+    height: 100dvh;
+}
+
+.menu-lateral .contenedor-logo h2,
+.menu-lateral .contenedor-logo p,
+.menu-lateral .opcion {
+    color: #eef5ff;
+}
+
+.menu-lateral .opcion.activa,
+.menu-lateral .opcion:hover {
+    background: #1765ba;
+    color: #ffffff;
+}
+
+/* Grupos desplegables */
+.signia-grupo {
+    border: 1px solid #ffffff25;
+    border-radius: 10px;
+}
+
+.signia-grupo[hidden] {
+    display: none;
+}
+
+.signia-grupo summary {
+    cursor: pointer;
+    padding: 13px 15px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.signia-grupo .opcion {
+    display: block;
+    margin: 3px 6px 7px;
+    font-size: 14px;
+    padding: 11px;
+}
+
+/* Botón para cambiar el tema */
+.signia-tema {
+    border: 1px solid var(--signia-borde);
+    background: var(--signia-superficie);
+    color: var(--signia-texto);
+    padding: 11px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    font: inherit;
+    margin-top: 12px;
+}
+
+body > .signia-tema {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 100;
+    box-shadow: 0 4px 20px #0002;
+}
+
+.signia-tema:focus-visible,
+.signia-grupo summary:focus-visible {
+    outline: 3px solid #fbbf24;
+    outline-offset: 3px;
+}
+
+/* Fondos y textos en modo oscuro */
+:root[data-tema="oscuro"] body {
+    color: var(--signia-texto);
+    background: var(--signia-fondo);
+}
+
+:root[data-tema="oscuro"] :is(
+    .contenido-principal,
+    .contenido
+) {
+    color: var(--signia-texto);
+}
+
+:root[data-tema="oscuro"] :is(
+    .tarjeta,
+    .tarjeta-resumen,
+    .grupo-dashboard,
+    .panel-grafico,
+    .datos-usuario,
+    .tarjeta-accion,
+    .formulario,
+    .contenedor-login,
+    .login-container,
+    .tarjeta-login,
+    .panel-login,
+    .formulario-login
+) {
+    background: var(--signia-superficie);
+    color: var(--signia-texto);
+    border-color: var(--signia-borde);
+}
+
+:root[data-tema="oscuro"] :is(
+    h1,
+    h2,
+    h3,
+    h4,
+    p,
+    label,
+    td,
+    th,
+    .titulo-grupo-dashboard,
+    .descripcion-grupo-dashboard,
+    .titulo-seccion
+) {
+    color: var(--signia-texto);
+}
+
+/* Campos de formularios */
+:root[data-tema="oscuro"] :is(
+    input,
+    select,
+    textarea
+) {
+    background: #122131;
+    color: #eef5ff;
+    border-color: var(--signia-borde);
+}
+
+:root[data-tema="oscuro"] :is(
+    input,
+    textarea
+)::placeholder {
+    color: #a8b9ce;
+}
+
+/* Tablas */
+:root[data-tema="oscuro"] :is(
+    th,
+    thead
+) {
+    background: #233a53;
+}
+
+:root[data-tema="oscuro"] td {
+    border-color: var(--signia-borde);
+}
+
+:root[data-tema="oscuro"] :is(
+    tbody tr:nth-child(even),
+    tbody tr:hover
+) {
+    background: #233549;
+}
+
+:root[data-tema="oscuro"] .busqueda-rapida {
+    background: #233a53;
+}
+
+/* Pantallas grandes */
+@media (min-width: 1000px) {
+    .contenido-principal {
+        padding: 28px 30px;
+    }
+
+    .grupo-dashboard {
+        padding: 20px;
+    }
+
+    .tarjeta-resumen {
+        padding: 18px;
+    }
+}
+
+/* Celulares */
+@media (max-width: 700px) {
+    body {
+        display: block;
+    }
+
+    .menu-lateral {
+        position: relative;
+        width: 100%;
+        min-height: 0;
+        height: auto;
+        padding: 16px;
+    }
+
+    .menu-lateral .contenedor-logo {
+        margin-bottom: 16px;
+    }
+
+    .contenido-principal {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px 14px;
+    }
+
+    .barra-superior {
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+
+    .grid-dashboard {
+        grid-template-columns: 1fr !important;
+    }
+
+    .menu-lateral .cerrar-sesion {
+        margin-top: 16px;
+    }
+}
+/* =========================================
+   MEJORA VISUAL: MANTENIMIENTOS
+   ========================================= */
+
+/* Colores para esta pantalla */
+:root {
+    --mant-superficie: #ffffff;
+    --mant-fondo-suave: #f5f8fc;
+    --mant-texto: #21364d;
+    --mant-secundario: #5d7087;
+    --mant-borde: #dce5ef;
+    --mant-hover: #edf4fd;
+    --mant-encabezado: #edf3fa;
+}
+
+:root[data-tema="oscuro"] {
+    --mant-superficie: #192637;
+    --mant-fondo-suave: #142131;
+    --mant-texto: #edf3fb;
+    --mant-secundario: #afc0d4;
+    --mant-borde: #33465d;
+    --mant-hover: #22374e;
+    --mant-encabezado: #23374f;
+}
+
+/* Espacio general */
+.contenedor-mantenimientos {
+    padding: 8px 0 24px;
+}
+
+/* Tarjetas de indicadores */
+.resumen-mantenimientos {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.tarjeta-resumen-mantenimiento {
+    background: var(--mant-superficie);
+    border: 1px solid var(--mant-borde);
+    border-radius: 14px;
+    padding: 18px 20px;
+    min-width: 0;
+    box-shadow: 0 4px 14px rgb(0 0 0 / 4%);
+}
+
+.tarjeta-resumen-mantenimiento span {
+    display: block;
+    color: var(--mant-secundario);
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.tarjeta-resumen-mantenimiento strong {
+    display: block;
+    color: var(--mant-texto);
+    font-size: 29px;
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Separar los indicadores de máquinas
+   de los indicadores de mantenimiento */
+.tarjeta-resumen-mantenimiento:nth-child(n + 5) {
+    background: var(--mant-fondo-suave);
+}
+
+/* Colores legibles de los números */
+:root[data-tema="oscuro"]
+.tarjeta-resumen-mantenimiento .numero-preventivo {
+    color: #67e8aa !important;
+}
+
+:root[data-tema="oscuro"]
+.tarjeta-resumen-mantenimiento .numero-correctivo,
+:root[data-tema="oscuro"]
+.tarjeta-resumen-mantenimiento .numero-falla {
+    color: #ff9090 !important;
+}
+
+:root[data-tema="oscuro"]
+.tarjeta-resumen-mantenimiento .numero-revision {
+    color: #ffd166 !important;
+}
+
+/* Contenedor de la tabla */
+.contenedor-tabla {
+    background: var(--mant-superficie);
+    color: var(--mant-texto);
+    border: 1px solid var(--mant-borde);
+    border-radius: 16px;
+    padding: 24px;
+    overflow-x: auto;
+    box-shadow: 0 6px 20px rgb(0 0 0 / 4%);
+}
+
+/* Título y búsqueda */
+.encabezado-tabla {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.contenedor-tabla .encabezado-tabla h2 {
+    color: var(--mant-texto);
+    font-size: 21px;
+    line-height: 1.35;
+    margin: 0 0 6px;
+}
+
+.contenedor-tabla .encabezado-tabla p {
+    color: var(--mant-secundario);
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 600px;
+}
+
+.contenedor-tabla .buscador {
+    width: 290px;
+    max-width: 100%;
+    min-width: 0;
+    padding: 12px 14px;
+    background: var(--mant-fondo-suave);
+    color: var(--mant-texto);
+    border: 1px solid var(--mant-borde);
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.contenedor-tabla .buscador::placeholder {
+    color: var(--mant-secundario);
+    opacity: 1;
+}
+
+.contenedor-tabla .buscador:focus {
+    outline: 2px solid #60a5fa;
+    outline-offset: 2px;
+}
+
+/* Tabla: filas uniformes y texto legible */
+#tablaMantenimientos {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#tablaMantenimientos thead th {
+    background: var(--mant-encabezado);
+    color: var(--mant-texto);
+    border-bottom: 1px solid var(--mant-borde);
+    padding: 15px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+    white-space: nowrap;
+}
+
+#tablaMantenimientos tbody tr,
+#tablaMantenimientos tbody tr:nth-child(even) {
+    background: var(--mant-superficie);
+}
+
+#tablaMantenimientos tbody tr:hover {
+    background: var(--mant-hover);
+}
+
+#tablaMantenimientos tbody td {
+    background: transparent;
+    color: var(--mant-texto);
+    border-bottom: 1px solid var(--mant-borde);
+    padding: 17px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    vertical-align: middle;
+}
+
+#tablaMantenimientos tbody td:first-child {
+    font-weight: 700;
+}
+
+#tablaMantenimientos td :is(strong, p, small) {
+    color: inherit;
+}
+
+#tablaMantenimientos td small {
+    display: block;
+    color: var(--mant-secundario);
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+/* Valores numéricos alineados */
+#tablaMantenimientos :is(th, td):nth-child(n + 4):nth-child(-n + 7) {
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Controles de acciones */
+#tablaMantenimientos td:last-child {
+    min-width: 170px;
+}
+
+#tablaMantenimientos td select {
+    display: block;
+    width: 100%;
+    min-height: 36px;
+    background: var(--mant-fondo-suave);
+    color: var(--mant-texto);
+    border: 1px solid var(--mant-borde);
+    border-radius: 8px;
+    padding: 7px 9px;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+#tablaMantenimientos td :is(button, a) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 7px 10px;
+    margin: 0 5px 5px 0;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Mensajes de carga y estado */
+.contenedor-tabla .estado {
+    color: var(--mant-secundario);
+}
+
+/* Botón de cierre de sesión */
+.menu-lateral .cerrar-sesion {
+    background: rgb(255 255 255 / 10%);
+    color: #edf3fb;
+    border: 1px solid rgb(255 255 255 / 20%);
+}
+
+.menu-lateral .cerrar-sesion:hover {
+    background: rgb(255 255 255 / 18%);
+}
+
+/* Botón del tema integrado en el menú */
+.menu-lateral .signia-tema {
+    background: #102b49;
+    color: #ffffff;
+    border: 1px solid #55718f;
+}
+
+/* Adaptación a pantallas pequeñas */
+@media (max-width: 1100px) {
+    .resumen-mantenimientos {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .contenedor-mantenimientos {
+        padding: 8px 0;
+    }
+
+    .contenedor-tabla {
+        padding: 16px;
+    }
+
+    .encabezado-tabla {
+        align-items: stretch;
+    }
+
+    .contenedor-tabla .buscador {
+        width: 100%;
+    }
+
+    .tarjeta-resumen-mantenimiento {
+        padding: 15px;
+    }
+
+    .tarjeta-resumen-mantenimiento strong {
+        font-size: 25px;
+    }
+}
+/* ==========================================
+   CORRECCIÓN DE CONTRASTE EN MODO OSCURO
+   Usuarios, reportes e historial de máquinas
+   ========================================== */
+
+/* Contenedores que antes conservaban fondo blanco */
+:root[data-tema="oscuro"] :is(
+    .tarjeta-usuarios,
+    .tarjeta-reporte,
+    .indicador-reporte,
+    .registro,
+    .item-falla
+) {
+    background: #1b2938;
+    color: #edf3fb;
+    border-color: #40536a;
+}
+
+/* Títulos, etiquetas y contenido de esas secciones */
+:root[data-tema="oscuro"] :is(
+    .tarjeta-usuarios,
+    .tarjeta-reporte,
+    .indicador-reporte,
+    .registro,
+    .datos-equipo,
+    .item-falla
+) :is(
+    h1,
+    h2,
+    h3,
+    h4,
+    p,
+    label,
+    strong,
+    small,
+    li,
+    dt,
+    dd
+) {
+    color: #edf3fb;
+}
+
+/* Indicadores numéricos de reportes */
+:root[data-tema="oscuro"] .indicador-reporte > span {
+    color: #b9c9dc;
+}
+
+:root[data-tema="oscuro"] .indicador-reporte strong {
+    color: #ffffff;
+}
+
+/* Datos de las máquinas y archivos */
+:root[data-tema="oscuro"] :is(
+    .dato,
+    .archivo-item,
+    .sin-archivos,
+    .sin-registros
+) {
+    background: #142131;
+    color: #dce7f5;
+    border-color: #40536a;
+}
+
+:root[data-tema="oscuro"] .dato span {
+    color: #b9c9dc;
+}
+
+:root[data-tema="oscuro"] :is(
+    .dato strong,
+    .archivo-nombre,
+    .titulo-archivos,
+    .titulo-fallas,
+    .detalle-registro,
+    .detalle-registro strong,
+    .estado-falla-texto
+) {
+    color: #edf3fb;
+}
+
+:root[data-tema="oscuro"] :is(
+    .fecha-registro,
+    .cargando-archivo,
+    .estado-lista
+) {
+    color: #b9c9dc;
+}
+
+/* Fallas pendientes: rojo oscuro con texto claro */
+:root[data-tema="oscuro"] .item-falla.pendiente {
+    background: #3b202b;
+    border: 1px solid #a95565;
+    color: #ffe5ea;
+}
+
+:root[data-tema="oscuro"] .item-falla.pendiente :is(
+    p,
+    strong,
+    small,
+    .estado-falla-texto
+) {
+    color: #ffe5ea;
+}
+
+/* Fallas solucionadas: verde oscuro con texto claro */
+:root[data-tema="oscuro"] .item-falla.solucionada {
+    background: #17372d;
+    border: 1px solid #42866c;
+    color: #dcfce7;
+}
+
+:root[data-tema="oscuro"] .item-falla.solucionada :is(
+    p,
+    strong,
+    small,
+    .estado-falla-texto
+) {
+    color: #dcfce7;
+}
+
+/* Separadores del historial */
+:root[data-tema="oscuro"] :is(
+    .registro,
+    .seccion-fallas,
+    .cabecera-registro
+) {
+    border-color: #40536a;
+}
+
+/* Tablas de usuarios y reportes */
+:root[data-tema="oscuro"] :is(
+    .tabla-usuarios,
+    .tabla-reportes
+) {
+    background: #1b2938;
+    color: #edf3fb;
+}
+
+:root[data-tema="oscuro"] :is(
+    .tabla-usuarios,
+    .tabla-reportes
+) thead th {
+    background: #263c54;
+    color: #ffffff;
+    border-color: #40536a;
+}
+
+:root[data-tema="oscuro"] :is(
+    .tabla-usuarios,
+    .tabla-reportes
+) tbody tr {
+    background: #1b2938;
+}
+
+:root[data-tema="oscuro"] :is(
+    .tabla-usuarios,
+    .tabla-reportes
+) tbody tr:nth-child(even) {
+    background: #203143;
+}
+
+:root[data-tema="oscuro"] :is(
+    .tabla-usuarios,
+    .tabla-reportes
+) tbody tr:hover {
+    background: #2a4159;
+}
+
+:root[data-tema="oscuro"] :is(
+    .tabla-usuarios,
+    .tabla-reportes
+) td {
+    background: transparent;
+    color: #edf3fb;
+    border-color: #40536a;
+}
+
+/* Texto adicional dentro de las tablas */
+:root[data-tema="oscuro"] :is(
+    .tabla-usuarios,
+    .tabla-reportes
+) td :is(p, strong, small) {
+    color: #edf3fb;
+}
+
+/* Etiquetas: cada color incluye su propio fondo */
+:root[data-tema="oscuro"] .etiqueta-activo {
+    background: #164b38;
+    color: #baf7d6;
+}
+
+:root[data-tema="oscuro"] .etiqueta-inactivo {
+    background: #572635;
+    color: #ffd5dd;
+}
+
+:root[data-tema="oscuro"] .etiqueta-rol {
+    background: #234a70;
+    color: #d5ebff;
+}
+
+/* Mensajes de confirmación y error */
+:root[data-tema="oscuro"] .mensaje.correcto {
+    background: #17372d;
+    color: #baf7d6;
+    border-color: #42866c;
+}
+
+:root[data-tema="oscuro"] .mensaje.error {
+    background: #3b202b;
+    color: #ffd5dd;
+    border-color: #a95565;
+}
+
+:root[data-tema="oscuro"] .error-archivo {
+    color: #ffb4bf;
+}
+
+/* Campos y listas desplegables */
+:root[data-tema="oscuro"] :is(
+    .tarjeta-usuarios,
+    .tarjeta-reporte
+) :is(input, select, textarea) {
+    background: #122131;
+    color: #edf3fb;
+    border-color: #526a84;
+}
+
+:root[data-tema="oscuro"] :is(
+    .tarjeta-usuarios,
+    .tarjeta-reporte
+) input::placeholder {
+    color: #b9c9dc;
+    opacity: 1;
+}
+
+:root[data-tema="oscuro"] select option {
+    background: #122131;
+    color: #edf3fb;
+}
+
+/* Mantener las etiquetas de botones legibles */
+:root[data-tema="oscuro"] :is(
+    .boton-crear,
+    .boton-estado,
+    .boton-filtrar,
+    .boton-exportar,
+    .boton-imprimir,
+    .boton-eliminar-registro,
+    .boton-solucionar-falla,
+    .boton-archivo
+) {
+    color: #ffffff;
+}
+/* REGISTRO ORGANIZADO EN SECCIONES */
+
+.registro-seccion {
+    margin-bottom: 18px;
+    border: 1px solid var(--signia-borde);
+    border-radius: 16px;
+    background: var(--signia-superficie);
+    color: var(--signia-texto);
+    overflow: hidden;
+    scroll-margin-top: 20px;
+}
+
+.registro-seccion > summary {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.registro-seccion > summary::-webkit-details-marker {
+    display: none;
+}
+
+.registro-seccion > summary::after {
+    content: "+";
+    margin-left: auto;
+    font-size: 25px;
+    color: var(--signia-texto);
+}
+
+.registro-seccion[open] > summary::after {
+    content: "−";
+}
+
+.registro-seccion[open] > summary {
+    border-bottom: 1px solid var(--signia-borde);
+}
+
+.registro-numero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: #1765ba;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.registro-textos {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.registro-textos strong {
+    color: var(--signia-texto);
+    font-size: 17px;
+}
+
+.registro-textos small {
+    color: #52677f;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+:root[data-tema="oscuro"] .registro-textos small {
+    color: #b9c9dc;
+}
+
+.registro-contenido {
+    padding: 20px;
+}
+
+.registro-contenido > .tarjeta {
+    margin: 0 0 18px;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+}
+
+.registro-continuar {
+    display: block;
+    margin: 18px 0 0 auto;
+    padding: 12px 20px;
+    background: #1765ba;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.registro-continuar:hover {
+    background: #104f95;
+}
+
+.registro-continuar:focus-visible,
+.registro-seccion > summary:focus-visible {
+    outline: 3px solid #e8a317;
+    outline-offset: 3px;
+}
+
+/* Evidencias legibles en modo oscuro */
+:root[data-tema="oscuro"] .registro-contenido :is(
+    .selector-archivos,
+    .archivo-item,
+    .vista-previa
+) {
+    background: #142131;
+    color: #edf3fb;
+    border-color: #526a84;
+}
+
+:root[data-tema="oscuro"] .registro-contenido
+.selector-archivos :is(strong, small, span) {
+    color: #edf3fb;
+}
+
+@media (max-width: 700px) {
+    .registro-seccion > summary {
+        padding: 16px;
+    }
+
+    .registro-contenido {
+        padding: 16px;
+    }
+
+    .registro-textos strong {
+        font-size: 15px;
+    }
+
+    .registro-continuar {
+        width: 100%;
+    }
+}
+/* RESUMEN DE ATENCIÓN DEL PANEL */
+
+.resumen-atencion {
+    background: var(--signia-superficie);
+    color: var(--signia-texto);
+    border: 1px solid var(--signia-borde);
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.atencion-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.resumen-atencion h2 {
+    color: var(--signia-texto);
+    font-size: 22px;
+    margin: 0 0 7px;
+}
+
+.atencion-encabezado p {
+    color: #52677f;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.atencion-acceso {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #1765ba;
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 11px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.atencion-acceso:hover {
+    background: #104f95;
+}
+
+.atencion-acceso:focus-visible {
+    outline: 3px solid #e8a317;
+    outline-offset: 3px;
+}
+
+.atencion-indicadores {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.atencion-item {
+    min-width: 0;
+    border: 1px solid var(--signia-borde);
+    border-top: 4px solid #1765ba;
+    border-radius: 12px;
+    padding: 20px;
+    background: var(--signia-fondo);
+}
+
+.resumen-atencion .atencion-item h3 {
+    color: var(--signia-texto);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 12px;
+}
+
+.atencion-item > strong {
+    display: block;
+    color: var(--signia-texto);
+    font-size: 36px;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.resumen-atencion .atencion-item p {
+    color: #52677f;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0 0 12px;
+}
+
+.atencion-item small {
+    display: block;
+    color: #52677f;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.atencion-roja {
+    border-top-color: #dc4545;
+}
+
+.atencion-amarilla {
+    border-top-color: #d39216;
+}
+
+.atencion-azul {
+    border-top-color: #3482df;
+}
+
+.resumen-atencion .atencion-nota {
+    color: #52677f;
+    font-size: 12px;
+    line-height: 1.7;
+    margin: 18px 0 0;
+}
+
+:root[data-tema="oscuro"]
+.resumen-atencion :is(
+    .atencion-encabezado p,
+    .atencion-item p,
+    .atencion-item small,
+    .atencion-nota
+) {
+    color: #b9c9dc;
+}
+
+@media (max-width: 1000px) {
+    .atencion-indicadores {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .resumen-atencion {
+        padding: 18px;
+    }
+
+    .atencion-acceso {
+        width: 100%;
+    }
+}
+/* Contraste del panel del técnico */
+:root[data-tema="oscuro"] #panelOperativo {
+    background: #1b2938;
+    color: #edf3fb;
+    border: 1px solid #40536a;
+    box-shadow: none;
+}
+
+:root[data-tema="oscuro"]
+#panelOperativo .mensaje-bienvenida {
+    background: #142131;
+    color: #edf3fb;
+    margin-bottom: 0;
+}
+
+:root[data-tema="oscuro"] #panelOperativo h2 {
+    color: #ffffff;
+}
+
+:root[data-tema="oscuro"] #panelOperativo p {
+    color: #c3d1e2;
+}
+
+/* Buscador del panel principal */
+:root[data-tema="oscuro"]
+.contenido-principal > section.buscador {
+    background: #203a55;
+    color: #edf3fb;
+    border: 1px solid #40536a;
+}
+
+:root[data-tema="oscuro"]
+.contenido-principal > section.buscador h2 {
+    color: #ffffff;
+}
+
+:root[data-tema="oscuro"]
+.contenido-principal > section.buscador p {
+    color: #c3d1e2;
+}
+/* MENÚ Y DISTRIBUCIÓN PARA TELÉFONOS */
+
+.barra-movil {
+    display: none;
+}
+
+@media (max-width: 700px) {
+    .barra-movil {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        width: 100%;
+        padding: 12px 16px;
+        background: #12365d;
+        color: #ffffff;
+        border-bottom: 1px solid #ffffff25;
+    }
+
+    .barra-movil > strong {
+        color: #ffffff;
+        font-size: 20px;
+        letter-spacing: 1px;
+    }
+
+    .boton-menu-movil {
+        min-height: 44px;
+        padding: 10px 14px;
+        border: 1px solid #ffffff70;
+        border-radius: 9px;
+        background: #ffffff12;
+        color: #ffffff;
+        font: inherit;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .boton-menu-movil:focus-visible {
+        outline: 3px solid #fbbf24;
+        outline-offset: 2px;
+    }
+
+    /* Se oculta solo cuando existe el botón móvil.
+       Si JavaScript falla, el menú original sigue visible. */
+    body:has(> .barra-movil) .menu-lateral {
+        display: none;
+    }
+
+    body:has(> .barra-movil) .menu-lateral.menu-abierto {
+        display: flex;
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        padding: 16px;
+    }
+
+    .menu-lateral .contenedor-logo {
+        margin-bottom: 16px;
+    }
+
+    .menu-lateral .logo {
+        width: 110px;
+    }
+
+    .contenido-principal {
+        width: 100%;
+        min-width: 0;
+        margin-left: 0;
+        padding: 20px 14px;
+    }
+
+    .barra-superior {
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .barra-superior h1 {
+        font-size: 26px;
+        line-height: 1.2;
+    }
+
+    .datos-usuario {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .datos-usuario strong {
+        overflow-wrap: anywhere;
+    }
+
+    /* Panel: una columna */
+    #resumenAdministrativo,
+    .grid-dashboard,
+    .bloque-criticidad,
+    .acciones {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .grupo-dashboard,
+    .panel-grafico,
+    .tarjeta-accion {
+        min-width: 0;
+    }
+
+    /* Formularios: una columna */
+    .campos,
+    .formulario-usuario,
+    .filtros-reporte {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .campo-completo {
+        grid-column: 1 / -1;
+    }
+
+    /* Buscador del panel */
+    .contenido-principal > section.buscador {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+        padding: 20px;
+    }
+
+    .formulario-busqueda {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .formulario-busqueda input {
+        min-width: 0;
+        width: 100%;
+    }
+
+    /* Texto de campos cómodo de leer */
+    .contenido-principal :is(input, select, textarea) {
+        font-size: 16px;
+    }
+
+    /* Desplazar las tablas dentro de su contenedor */
+    .tabla-contenedor,
+    .contenedor-tabla,
+    .panel-grafico {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+}
+/* GRÁFICOS CIRCULARES DEL PANEL */
+
+.graficos-circulares {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    width: 100%;
+    grid-column: 1 / -1;
+    margin-bottom: 24px;
+}
+
+.grafico-tarjeta {
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid var(--signia-borde);
+    border-radius: 18px;
+    background: var(--signia-superficie);
+    color: var(--signia-texto);
+}
+
+.grafico-tarjeta h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+    color: var(--signia-texto);
+}
+
+.grafico-tarjeta .grafico-descripcion,
+.grafico-tarjeta .grafico-mensaje {
+    color: #52677f;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.grafico-descripcion {
+    margin: 0 0 22px;
+}
+
+.grafico-mensaje {
+    margin: 18px 0 0;
+}
+
+.grafico-cuerpo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.grafico-dona {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: var(--signia-borde);
+}
+
+.grafico-centro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 126px;
+    height: 126px;
+    border-radius: 50%;
+    background: var(--signia-superficie);
+}
+
+.grafico-centro strong {
+    color: var(--signia-texto);
+    font-size: 36px;
+    line-height: 1.2;
+}
+
+.grafico-centro span {
+    color: #52677f;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.grafico-leyenda {
+    flex: 1 1 200px;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.grafico-leyenda li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--signia-borde);
+    font-size: 13px;
+    color: var(--signia-texto);
+}
+
+.grafico-leyenda li:last-child {
+    border-bottom: none;
+}
+
+.grafico-punto {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.grafico-nombre {
+    flex: 1;
+    min-width: 0;
+}
+
+.grafico-leyenda strong {
+    color: var(--signia-texto);
+    white-space: nowrap;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+}
+
+:root[data-tema="oscuro"] .grafico-tarjeta :is(
+    .grafico-descripcion,
+    .grafico-mensaje,
+    .grafico-centro span
+) {
+    color: #b9c9dc;
+}
+
+@media (max-width: 1100px) {
+    .graficos-circulares {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .grafico-tarjeta {
+        padding: 18px;
+    }
+
+    .grafico-cuerpo {
+        flex-direction: column;
+    }
+
+    .grafico-leyenda {
+        width: 100%;
+        flex: auto;
+    }
+}
+/* IDENTIFICACIÓN DEL TRABAJADOR: MODO OSCURO */
+
+:root[data-tema="oscuro"] .panel-informativo {
+    background: linear-gradient(145deg, #123f70, #102b49);
+}
+
+:root[data-tema="oscuro"] .panel-informativo h1 {
+    color: #ffffff;
+}
+
+:root[data-tema="oscuro"] .panel-informativo p {
+    color: #d6e6f8;
+}
+
+:root[data-tema="oscuro"] .tarjeta-identificacion {
+    background: #19293a;
+    color: #edf3fb;
+    border: 1px solid #405870;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+}
+
+:root[data-tema="oscuro"] .tarjeta-identificacion h2,
+:root[data-tema="oscuro"] .campo-trabajador label {
+    color: #ffffff;
+}
+
+:root[data-tema="oscuro"] .tarjeta-identificacion p {
+    color: #c3d3e5;
+}
+
+:root[data-tema="oscuro"] .area-identificacion {
+    color: #93c5fd;
+}
+
+:root[data-tema="oscuro"] .campo-trabajador input {
+    background: #0f1e2e;
+    color: #ffffff;
+    border: 1px solid #617b96;
+    font-size: 16px;
+}
+
+:root[data-tema="oscuro"] .campo-trabajador input:focus {
+    outline: 2px solid #80baff;
+    outline-offset: 2px;
+}
+
+:root[data-tema="oscuro"] .campo-trabajador input:disabled,
+:root[data-tema="oscuro"] .campo-trabajador input[readonly] {
+    background: #26394d;
+    color: #e5edf7;
+    opacity: 1;
+}
+
+:root[data-tema="oscuro"] .boton-identificar {
+    background: #246ac0;
+    color: #ffffff;
+}
+
+:root[data-tema="oscuro"] .boton-volver {
+    color: #a5cfff;
+}
+
+:root[data-tema="oscuro"] .mensaje-identificacion.identificacion-error {
+    color: #ffb4bf;
+}
+
+:root[data-tema="oscuro"] .mensaje-identificacion.identificacion-exito {
+    color: #86efac;
+}
+/* ORDEN Y ESPACIADO DEL PANEL PRINCIPAL */
+
+/* Cada sección principal ocupa una fila completa */
+#resumenAdministrativo {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+#resumenAdministrativo > * {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 0;
+}
+
+/* Respetar la visibilidad por rol */
+#resumenAdministrativo.oculto,
+#resumenAdministrativo[hidden] {
+    display: none !important;
+}
+
+/* El total ya se muestra dentro de los anillos */
+#resumenGeneral.total-repetido {
+    display: none !important;
+}
+
+/* Dos anillos juntos y ranking debajo */
+#graficosCirculares {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin: 0;
+}
+
+#graficosCirculares .panel-analisis-encabezado,
+#graficosCirculares .ranking-integrado {
+    grid-column: 1 / -1;
+}
+
+/* Evitar tarjetas excesivamente altas */
+#resumenAdministrativo .grupo-dashboard {
+    min-height: 0;
+    margin-bottom: 0;
+    padding: 22px;
+}
+
+#resumenAdministrativo .tarjeta-resumen {
+    min-width: 0;
+    min-height: 0;
+}
+
+/* Separación respecto al buscador */
+.contenido-principal > section.buscador {
+    margin-bottom: 24px;
+}
+
+/* Acciones al final del resumen */
+.seccion-acciones {
+    margin-top: 28px;
+}
+
+.seccion-acciones .acciones {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.seccion-acciones .tarjeta-accion {
+    min-width: 0;
+    margin: 0;
+}
+
+/* Adaptación a tablet y celular */
+@media (max-width: 1100px) {
+    #graficosCirculares {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .seccion-acciones .acciones {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    #resumenAdministrativo {
+        gap: 18px;
+    }
+
+    .seccion-acciones .acciones {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+/* DISTRIBUCIÓN DEL PANEL Y TENDENCIA DIARIA */
+
+#graficosCirculares {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+/* El encabezado ocupa toda la fila: evita el espacio vacío */
+#graficosCirculares > .panel-analisis-encabezado {
+    grid-column: 1 / -1;
+    order: 0;
+}
+
+/* Primera fila: estado operativo y tendencia */
+#graficosCirculares > .grafico-tarjeta {
+    order: 10;
+    min-width: 0;
+}
+
+#graficosCirculares > #tarjetaTendencia {
+    order: 20;
+}
+
+/* Segunda fila: criticidad y ranking */
+#graficosCirculares > .grafico-tarjeta:nth-of-type(2) {
+    order: 30;
+}
+
+#graficosCirculares > .ranking-integrado {
+    grid-column: auto;
+    order: 40;
+}
+
+.tendencia-filtros {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.tendencia-filtros label {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    color: var(--signia-texto);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.tendencia-filtros select {
+    min-width: 0;
+    width: 100%;
+    min-height: 42px;
+    padding: 9px;
+    border: 1px solid var(--signia-borde);
+    border-radius: 9px;
+    background: var(--signia-superficie);
+    color: var(--signia-texto);
+    font: inherit;
+}
+
+.tendencia-lienzo {
+    width: 100%;
+    min-width: 0;
+}
+
+.tendencia-lienzo svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.tendencia-lienzo svg text {
+    fill: var(--signia-texto);
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+}
+
+.tendencia-rejilla {
+    stroke: var(--signia-borde);
+    stroke-width: 1;
+}
+
+.tendencia-linea {
+    fill: none;
+    stroke: #3b82f6;
+    stroke-width: 3;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.tendencia-punto {
+    fill: #2563eb;
+    stroke: var(--signia-superficie);
+    stroke-width: 1.5;
+}
+
+.tendencia-tarjeta .tendencia-estado,
+.tendencia-tarjeta .tendencia-nota {
+    color: #52677f;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+:root[data-tema="oscuro"] .tendencia-tarjeta .tendencia-estado,
+:root[data-tema="oscuro"] .tendencia-tarjeta .tendencia-nota {
+    color: #c3d3e5;
+}
+
+:root[data-tema="oscuro"] .tendencia-linea {
+    stroke: #60a5fa;
+}
+
+:root[data-tema="oscuro"] .tendencia-punto {
+    fill: #60a5fa;
+}
+
+.tendencia-datos {
+    margin-top: 12px;
+    color: var(--signia-texto);
+    font-size: 13px;
+}
+
+.tendencia-datos summary {
+    cursor: pointer;
+    padding: 8px 0;
+}
+
+.tendencia-datos table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tendencia-datos :is(th, td) {
+    padding: 8px;
+    border-bottom: 1px solid var(--signia-borde);
+    text-align: left;
+}
+
+@media (max-width: 1100px) {
+    #graficosCirculares {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 500px) {
+    .tendencia-filtros {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Reportes | SIGNIA</title>
+
+    <link
+        rel="stylesheet"
+        href="css/maquinas.css"
+    >
+
+    <script
+        src="js/sesion.js"
+        defer
+    ></script>
+
+    <style>
+        .contenedor-reportes {
+            padding: 30px;
+        }
+
+        .tarjeta-reporte {
+            padding: 25px;
+            margin-bottom: 25px;
+            background: white;
+            border-radius: 18px;
+        }
+
+        .tarjeta-reporte h2 {
+            margin-bottom: 8px;
+            color: #174d73;
+        }
+
+        .filtros-reporte {
+            display: grid;
+            grid-template-columns:
+                repeat(5, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 22px;
+        }
+
+        .grupo-filtro {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .grupo-filtro label {
+            color: #174d73;
+            font-weight: bold;
+        }
+
+        .grupo-filtro input,
+        .grupo-filtro select {
+            padding: 12px 14px;
+            border: 1px solid #cadde9;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .acciones-reporte {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .acciones-reporte button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton-filtrar {
+            background: #5e9ed2;
+        }
+
+        .boton-limpiar {
+            background: #7d94a3;
+        }
+
+        .boton-exportar {
+            background: #32a36b;
+        }
+
+        .boton-imprimir {
+            background: #825bb0;
+        }
+
+        .resumen-reporte {
+            display: grid;
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .indicador-reporte {
+            padding: 22px;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #dce8ef;
+        }
+
+        .indicador-reporte p {
+            color: #708a9b;
+        }
+
+        .indicador-reporte h3 {
+            margin-top: 8px;
+            color: #174d73;
+            font-size: 28px;
+        }
+
+        .tabla-contenedor {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .tabla-reportes {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .tabla-reportes th,
+        .tabla-reportes td {
+            padding: 13px;
+            border-bottom: 1px solid #dce8ef;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .tabla-reportes th {
+            color: #174d73;
+            background: #eef6fb;
+        }
+
+        .etiqueta-rol,
+        .etiqueta-tipo {
+            display: inline-block;
+            padding: 4px 9px;
+            border-radius: 20px;
+            color: #3979a8;
+            background: #e3f1fb;
+            font-size: 13px;
+        }
+
+        .estado-reporte {
+            padding: 25px;
+            color: #607d90;
+            text-align: center;
+        }
+
+        .mensaje-error {
+            color: #b94242;
+        }
+
+
+        /* Reporte independiente de fallas */
+        .cabecera-fallas-reporte { display:flex; justify-content:space-between; gap:16px; align-items:center; flex-wrap:wrap; }
+        .filtros-fallas { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-top:20px; }
+        .resumen-fallas { display:flex; gap:16px; flex-wrap:wrap; margin-top:18px; color:#174d73; font-weight:600; }
+        .estado-falla-celda { font-weight:700; }
+        .estado-falla-celda.solucionada { color:#21845a; }
+        .estado-falla-celda.pendiente { color:#b94242; }
+        @media(max-width:900px) {.filtros-fallas {grid-template-columns:1fr 1fr;}}
+        @media(max-width:600px) {.filtros-fallas {grid-template-columns:1fr;}}
+        @media print {.filtros-fallas {display:none!important;}}
+
+        @media (max-width: 1000px) {
+            .filtros-reporte {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .resumen-reporte {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .filtros-reporte {
+                grid-template-columns: 1fr;
+            }
+
+            .resumen-reporte {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media print {
+            .menu-lateral,
+            .barra-superior,
+            .filtros-reporte,
+            .acciones-reporte {
+                display: none !important;
+            }
+
+            .contenido-principal {
+                margin-left: 0 !important;
+            }
+
+            .contenedor-reportes {
+                padding: 0;
+            }
+
+            .tarjeta-reporte,
+            .indicador-reporte {
+                box-shadow: none;
+                border: 1px solid #cccccc;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="css/interfaz.css">
+    <script src="js/interfaz.js"></script>
+    <script src="js/menu-movil.js" defer></script>
+
+</head>
+    <script src="js/config.js"></script>
+<body>
+
+    <aside class="menu-lateral">
+
+        <div class="contenedor-logo">
+
+            <img
+                src="css/imagenes/logo-signia.png"
+                alt="Logo de SIGNIA"
+                class="logo"
+            >
+
+            <h2>SIGNIA</h2>
+
+            <p>Gestión de Maquinarias</p>
+
+        </div>
+
+        <nav class="menu">
+
+            <a
+                href="panel.html"
+                class="opcion"
+            >
+                🏠 Panel principal
+            </a>
+
+            <a
+                href="registrar-maquina.html"
+                class="opcion"
+            >
+                ⚙️ Registrar mantenimiento
+            </a>
+
+            <a
+                href="buscar-maquina.html"
+                class="opcion"
+            >
+                🔍 Buscar por código
+            </a>
+
+            <a
+                href="mantenimientos.html"
+                class="opcion"
+            >
+                🛠️ Mantenimientos
+            </a>
+
+            <a
+                href="reportes.html"
+                class="opcion activa"
+            >
+                📊 Reportes
+            </a>
+
+            <a
+                href="usuarios.html"
+                class="opcion"
+                id="opcionUsuarios"
+            >
+                👥 Usuarios
+            </a>
+
+        </nav>
+
+        <a
+            href="index.html"
+            id="cerrarSesion"
+            class="cerrar-sesion"
+        >
+            Cerrar sesión
+        </a>
+
+    </aside>
+
+    <main class="contenido-principal">
+
+        <header class="barra-superior">
+
+            <div>
+                <a
+                    href="panel.html"
+                    class="volver"
+                >
+                    ← Volver al panel
+                </a>
+
+                <h1>Reportes de SIGNIA</h1>
+
+                <p>
+                    Filtra, consulta, imprime y exporta registros.
+                </p>
+            </div>
+
+            <div class="datos-usuario">
+
+                <div
+                    class="avatar"
+                    id="avatarUsuario"
+                >
+                    --
+                </div>
+
+                <div>
+                    <strong id="nombreUsuario">
+                        Cargando...
+                    </strong>
+
+                    <span id="rolUsuario">
+                        Cargando...
+                    </span>
+                </div>
+
+            </div>
+
+        </header>
+
+        <section class="contenedor-reportes">
+
+            <div class="tarjeta-reporte">
+
+                <h2>Filtros del reporte</h2>
+
+                <p>
+                    Selecciona uno o más criterios.
+                </p>
+
+                <div class="filtros-reporte">
+
+                    <div class="grupo-filtro">
+                        <label for="filtroCodigo">
+                            Código
+                        </label>
+
+                        <input
+                            type="text"
+                            id="filtroCodigo"
+                            placeholder="Ejemplo: 2590"
+                        >
+                    </div>
+
+                    <div class="grupo-filtro">
+                        <label for="filtroRol">
+                            Rol
+                        </label>
+
+                        <select id="filtroRol">
+                            <option value="">
+                                Todos
+                            </option>
+
+                            <option value="proveedor">
+                                Proveedor
+                            </option>
+
+                            <option value="tecnico">
+                                Técnico
+                            </option>
+
+                            <option value="operativo">
+                                Personal operativo
+                            </option>
+
+                            <option value="administracion">
+                                Administración
+                            </option>
+
+                            <option value="administrador">
+                                Administrador
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="grupo-filtro">
+                        <label for="filtroTipo">
+                            Tipo
+                        </label>
+
+                        <select id="filtroTipo">
+                            <option value="">
+                                Todos
+                            </option>
+
+                            <option value="preventivo">
+                                Preventivo
+                            </option>
+
+                            <option value="correctivo">
+                                Correctivo
+                            </option>
+
+                            <option value="solo_revision">
+                                Solo revisión
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="grupo-filtro">
+                        <label for="fechaDesde">
+                            Desde
+                        </label>
+
+                        <input
+                            type="date"
+                            id="fechaDesde"
+                        >
+                    </div>
+
+                    <div class="grupo-filtro">
+                        <label for="fechaHasta">
+                            Hasta
+                        </label>
+
+                        <input
+                            type="date"
+                            id="fechaHasta"
+                        >
+                    </div>
+
+                </div>
+
+                <div class="acciones-reporte">
+
+                    <button
+                        type="button"
+                        class="boton-filtrar"
+                        id="botonFiltrar"
+                    >
+                        Aplicar filtros
+                    </button>
+
+                    <button
+                        type="button"
+                        class="boton-limpiar"
+                        id="botonLimpiar"
+                    >
+                        Limpiar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="boton-exportar"
+                        id="botonExportar"
+                    >
+                        Exportar CSV
+                    </button>
+
+                    <button
+                        type="button"
+                        class="boton-imprimir"
+                        id="botonImprimir"
+                    >
+                        Imprimir
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="resumen-reporte">
+
+                <article class="indicador-reporte">
+                    <p>Registros encontrados</p>
+
+                    <h3 id="cantidadRegistros">
+                        0
+                    </h3>
+                </article>
+
+                <article class="indicador-reporte">
+                    <p>Máquinas diferentes</p>
+
+                    <h3 id="cantidadMaquinas">
+                        0
+                    </h3>
+                </article>
+
+                <article class="indicador-reporte">
+                    <p>Trabajadores identificados</p>
+
+                    <h3 id="cantidadUsuarios">
+                        0
+                    </h3>
+                </article>
+
+                <article class="indicador-reporte">
+                    <p>Archivos adjuntos</p>
+
+                    <h3 id="cantidadArchivos">
+                        0
+                    </h3>
+                </article>
+
+            </div>
+
+            <div class="tarjeta-reporte">
+
+                <h2>Resultados</h2>
+
+                <div
+                    id="estadoReporte"
+                    class="estado-reporte"
+                >
+                    Cargando registros...
+                </div>
+
+                <div class="tabla-contenedor">
+
+                    <table
+                        id="tablaReportes"
+                        class="tabla-reportes"
+                        hidden
+                    >
+
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Código</th>
+                                <th>Tipo</th>
+                                <th>Trabajador</th>
+                                <th>Código de empleado</th>
+                                <th>Área</th>
+                                <th>Cuenta del área</th>
+                                <th>Rol</th>
+                                <th>Ubicación</th>
+                                <th>Archivos</th>
+                                <th>Comentario</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="cuerpoReporte"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+            <!-- REPORTE DE FALLAS Y SOLUCIONES -->
+            <section class="tarjeta-reporte" id="seccionReporteFallas" aria-labelledby="tituloReporteFallas">
+                <div class="cabecera-fallas-reporte">
+                    <div>
+                        <h2 id="tituloReporteFallas">Reporte de fallas y soluciones</h2>
+                        <p>Consulta incidencias de todas las máquinas e identifica a quien registró y solucionó cada falla.</p>
+                    </div>
+                </div>
+                <div class="filtros-fallas">
+                    <div class="grupo-filtro"><label for="fallaFiltroCodigo">Código de máquina</label><input id="fallaFiltroCodigo" type="text" placeholder="Ejemplo: 2590"></div>
+                    <div class="grupo-filtro"><label for="fallaFiltroEstado">Estado</label><select id="fallaFiltroEstado"><option value="">Todos</option><option value="pendiente">Pendiente</option><option value="solucionada">Solucionada</option></select></div>
+                    <div class="grupo-filtro"><label for="fallaFiltroDesde">Registrada desde</label><input id="fallaFiltroDesde" type="date"></div>
+                    <div class="grupo-filtro"><label for="fallaFiltroHasta">Registrada hasta</label><input id="fallaFiltroHasta" type="date"></div>
+                </div>
+                <div class="acciones-reporte">
+                    <button type="button" class="boton-filtrar" id="botonFiltrarFallas">Aplicar filtros</button>
+                    <button type="button" class="boton-limpiar" id="botonLimpiarFallas">Limpiar</button>
+                    <button type="button" class="boton-exportar" id="botonExportarFallas">Exportar fallas CSV</button>
+                </div>
+                <div class="resumen-fallas">
+                    <span>Total: <span id="totalFallasReporte">0</span></span>
+                    <span>Pendientes: <span id="totalFallasPendientesReporte">0</span></span>
+                    <span>Solucionadas: <span id="totalFallasSolucionadasReporte">0</span></span>
+                </div>
+                <div id="estadoReporteFallas" class="estado-reporte">Cargando fallas...</div>
+                <div class="tabla-contenedor">
+                    <table id="tablaReporteFallas" class="tabla-reportes" hidden>
+                        <thead><tr>
+                            <th>Máquina</th><th>Descripción de falla</th><th>Estado</th>
+                            <th>Fecha de registro</th><th>Registrada por</th><th>Código</th><th>Área</th>
+                            <th>Fecha de solución</th><th>Solucionada por</th><th>Código</th><th>Área</th>
+                        </tr></thead>
+                        <tbody id="cuerpoReporteFallas"></tbody>
+                    </table>
+                </div>
+            </section>
+
+        </section>
+
+    </main>
+
+    <script>
+        const SIGNIA_API_REPORTES =
+            "http://127.0.0.1:8000";
+
+        let registrosCompletos = [];
+        let registrosFiltrados = [];
+
+
+        function obtenerTokenReporte() {
+            return (
+                sessionStorage.getItem(
+                    "signia_token"
+                ) ||
+                localStorage.getItem(
+                    "signia_token"
+                )
+            );
+        }
+
+
+        function escaparHTML(valor) {
+            const elemento =
+                document.createElement(
+                    "div"
+                );
+
+            elemento.textContent =
+                valor === null ||
+                valor === undefined
+                    ? ""
+                    : String(valor);
+
+            return elemento.innerHTML;
+        }
+
+
+        // Los registros anteriores pueden no tener trabajador asociado.
+        function nombreTrabajador(registro) {
+            const nombre = [
+                registro.trabajador_nombres,
+                registro.trabajador_apellidos
+            ].filter(Boolean).join(" ").trim();
+
+            return nombre || "Sin identificar (registro anterior)";
+        }
+
+        function codigoTrabajador(registro) {
+            return registro.trabajador_codigo || "";
+        }
+
+        function areaTrabajador(registro) {
+            return registro.trabajador_area || "";
+        }
+
+        function formatearFecha(fecha) {
+            if (!fecha) {
+                return "No disponible";
+            }
+
+            return new Intl.DateTimeFormat(
+                "es-PE",
+                {
+                    dateStyle: "short",
+                    timeStyle: "short"
+                }
+            ).format(
+                new Date(fecha)
+            );
+        }
+
+
+        function nombreRol(rol) {
+            const roles = {
+                proveedor:
+                    "Proveedor",
+
+                tecnico:
+                    "Técnico",
+
+                operativo:
+                    "Personal operativo",
+
+                administracion:
+                    "Administración",
+
+                administrador:
+                    "Administrador"
+            };
+
+            return (
+                roles[rol] ||
+                rol ||
+                "No registrado"
+            );
+        }
+
+
+        function nombreTipo(tipo) {
+            const tipos = {
+                preventivo:
+                    "Preventivo",
+
+                correctivo:
+                    "Correctivo",
+
+                solo_revision:
+                    "Solo revisión"
+            };
+
+            return (
+                tipos[tipo] ||
+                tipo ||
+                "No registrado"
+            );
+        }
+
+
+        async function cargarReporte() {
+            const estado =
+                document.getElementById(
+                    "estadoReporte"
+                );
+
+            estado.hidden = false;
+
+            estado.className =
+                "estado-reporte";
+
+            estado.textContent =
+                "Cargando registros...";
+
+            try {
+                const respuesta =
+                    await fetch(
+                        SIGNIA_API_REPORTES +
+                        "/registros",
+                        {
+                            headers: {
+                                Authorization:
+                                    "Bearer " +
+                                    obtenerTokenReporte()
+                            }
+                        }
+                    );
+
+                const resultado =
+                    await respuesta.json();
+
+                if (!respuesta.ok) {
+                    throw new Error(
+                        resultado.detail ||
+                        "No se pudo cargar el reporte."
+                    );
+                }
+
+                registrosCompletos =
+                    resultado;
+
+                registrosFiltrados =
+                    resultado;
+
+                mostrarReporte(
+                    registrosFiltrados
+                );
+
+            } catch (error) {
+                estado.hidden = false;
+
+                estado.className =
+                    "estado-reporte mensaje-error";
+
+                estado.textContent =
+                    error.message;
+            }
+        }
+
+
+        function aplicarFiltros() {
+            const codigo =
+                document
+                    .getElementById(
+                        "filtroCodigo"
+                    )
+                    .value
+                    .trim()
+                    .toLowerCase();
+
+            const rol =
+                document
+                    .getElementById(
+                        "filtroRol"
+                    )
+                    .value
+                    .trim()
+                    .toLowerCase();
+
+            const tipo =
+                document
+                    .getElementById(
+                        "filtroTipo"
+                    )
+                    .value
+                    .trim()
+                    .toLowerCase();
+
+            const desde =
+                document
+                    .getElementById(
+                        "fechaDesde"
+                    )
+                    .value;
+
+            const hasta =
+                document
+                    .getElementById(
+                        "fechaHasta"
+                    )
+                    .value;
+
+            registrosFiltrados =
+                registrosCompletos.filter(
+                    function (registro) {
+                        const codigoRegistro =
+                            String(
+                                registro.codigo_maquina ||
+                                ""
+                            ).toLowerCase();
+
+                        const rolRegistro =
+                            String(
+                                registro.usuario_rol ||
+                                ""
+                            ).toLowerCase();
+
+                        const tipoRegistro =
+                            String(
+                                registro.tipo_mantenimiento ||
+                                ""
+                            ).toLowerCase();
+
+                        const fechaRegistro =
+                            registro.fecha_hora
+                                ? new Date(
+                                    registro.fecha_hora
+                                )
+                                : null;
+
+                        if (
+                            codigo &&
+                            !codigoRegistro.includes(
+                                codigo
+                            )
+                        ) {
+                            return false;
+                        }
+
+                        if (
+                            rol &&
+                            rolRegistro !== rol
+                        ) {
+                            return false;
+                        }
+
+                        if (
+                            tipo &&
+                            tipoRegistro !== tipo
+                        ) {
+                            return false;
+                        }
+
+                        if (
+                            desde &&
+                            fechaRegistro
+                        ) {
+                            const inicio =
+                                new Date(
+                                    desde +
+                                    "T00:00:00"
+                                );
+
+                            if (
+                                fechaRegistro <
+                                inicio
+                            ) {
+                                return false;
+                            }
+                        }
+
+                        if (
+                            hasta &&
+                            fechaRegistro
+                        ) {
+                            const final =
+                                new Date(
+                                    hasta +
+                                    "T23:59:59"
+                                );
+
+                            if (
+                                fechaRegistro >
+                                final
+                            ) {
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    }
+                );
+
+            mostrarReporte(
+                registrosFiltrados
+            );
+        }
+
+
+        function mostrarReporte(registros) {
+            const estado =
+                document.getElementById(
+                    "estadoReporte"
+                );
+
+            const tabla =
+                document.getElementById(
+                    "tablaReportes"
+                );
+
+            const cuerpo =
+                document.getElementById(
+                    "cuerpoReporte"
+                );
+
+            cuerpo.innerHTML = "";
+
+            const maquinasDiferentes =
+                new Set(
+                    registros.map(
+                        function (registro) {
+                            return registro.codigo_maquina;
+                        }
+                    )
+                );
+
+            const trabajadoresDiferentes = new Set(
+                registros
+                    .map(registro => registro.trabajador_id)
+                    .filter(id => id !== null && id !== undefined)
+            );
+
+            const totalArchivos =
+                registros.reduce(
+                    function (total, registro) {
+                        return (
+                            total +
+                            Number(
+                                registro.cantidad_archivos || 0
+                            )
+                        );
+                    },
+                    0
+                );
+
+            document.getElementById(
+                "cantidadRegistros"
+            ).textContent =
+                registros.length;
+
+            document.getElementById(
+                "cantidadMaquinas"
+            ).textContent =
+                maquinasDiferentes.size;
+
+            document.getElementById(
+                "cantidadUsuarios"
+            ).textContent =
+                trabajadoresDiferentes.size;
+
+            document.getElementById(
+                "cantidadArchivos"
+            ).textContent =
+                totalArchivos;
+
+            if (!registros.length) {
+                tabla.hidden = true;
+
+                estado.hidden = false;
+
+                estado.textContent =
+                    "No se encontraron registros.";
+
+                return;
+            }
+
+            registros.forEach(
+                function (registro) {
+                    const fila =
+                        document.createElement(
+                            "tr"
+                        );
+
+                    fila.innerHTML = `
+                        <td>
+                            ${escaparHTML(
+                                formatearFecha(
+                                    registro.fecha_hora
+                                )
+                            )}
+                        </td>
+
+                        <td>
+                            ${escaparHTML(
+                                registro.codigo_maquina
+                            )}
+                        </td>
+
+                        <td>
+                            <span class="etiqueta-tipo">
+                                ${escaparHTML(
+                                    nombreTipo(
+                                        registro.tipo_mantenimiento
+                                    )
+                                )}
+                            </span>
+                        </td>
+
+                        <td>
+                            ${escaparHTML(nombreTrabajador(registro))}
+                        </td>
+
+                        <td>
+                            ${escaparHTML(codigoTrabajador(registro))}
+                        </td>
+
+                        <td>
+                            ${escaparHTML(areaTrabajador(registro))}
+                        </td>
+
+                        <td>
+                            ${escaparHTML(registro.usuario_nombre)}
+                        </td>
+
+                        <td>
+                            <span class="etiqueta-rol">
+                                ${escaparHTML(
+                                    nombreRol(
+                                        registro.usuario_rol
+                                    )
+                                )}
+                            </span>
+                        </td>
+
+                        <td>
+                            ${escaparHTML(
+                                registro.ubicacion_actual
+                            )}
+                        </td>
+
+                        <td>
+                            ${escaparHTML(
+                                registro.cantidad_archivos || 0
+                            )}
+                        </td>
+
+                        <td>
+                            ${escaparHTML(
+                                registro.comentario
+                            )}
+                        </td>
+                    `;
+
+                    cuerpo.appendChild(
+                        fila
+                    );
+                }
+            );
+
+            estado.hidden = true;
+
+            tabla.hidden = false;
+        }
+
+
+        function limpiarFiltros() {
+            document.getElementById(
+                "filtroCodigo"
+            ).value = "";
+
+            document.getElementById(
+                "filtroRol"
+            ).value = "";
+
+            document.getElementById(
+                "filtroTipo"
+            ).value = "";
+
+            document.getElementById(
+                "fechaDesde"
+            ).value = "";
+
+            document.getElementById(
+                "fechaHasta"
+            ).value = "";
+
+            registrosFiltrados =
+                registrosCompletos;
+
+            mostrarReporte(
+                registrosFiltrados
+            );
+        }
+
+
+        function protegerValorCSV(valor) {
+            let texto =
+                valor === null ||
+                valor === undefined
+                    ? ""
+                    : String(valor);
+
+            if (/^\s*[=+\-@\t\r]/.test(texto)) {
+                texto = "'" + texto;
+            }
+
+            return (
+                '"' +
+                texto.replaceAll(
+                    '"',
+                    '""'
+                ) +
+                '"'
+            );
+        }
+
+
+        function exportarCSV() {
+            if (!registrosFiltrados.length) {
+                alert(
+                    "No hay registros para exportar."
+                );
+
+                return;
+            }
+
+            const filas = [
+                [
+                    "Fecha",
+                    "Código de máquina",
+                    "Tipo de mantenimiento",
+                    "Trabajador",
+                    "Código de empleado",
+                    "Área del trabajador",
+                    "Cuenta del área",
+                    "Rol",
+                    "Ubicación",
+                    "Cantidad de archivos",
+                    "Comentario"
+                ]
+            ];
+
+            registrosFiltrados.forEach(
+                function (registro) {
+                    filas.push(
+                        [
+                            formatearFecha(
+                                registro.fecha_hora
+                            ),
+                            registro.codigo_maquina,
+                            nombreTipo(
+                                registro.tipo_mantenimiento
+                            ),
+                            nombreTrabajador(registro),
+                            codigoTrabajador(registro),
+                            areaTrabajador(registro),
+                            registro.usuario_nombre,
+                            nombreRol(
+                                registro.usuario_rol
+                            ),
+                            registro.ubicacion_actual,
+                            registro.cantidad_archivos || 0,
+                            registro.comentario
+                        ]
+                    );
+                }
+            );
+
+            const contenido =
+                "\uFEFF" +
+                filas
+                    .map(
+                        function (fila) {
+                            return fila
+                                .map(
+                                    protegerValorCSV
+                                )
+                                .join(";");
+                        }
+                    )
+                    .join("\n");
+
+            const archivo =
+                new Blob(
+                    [contenido],
+                    {
+                        type:
+                            "text/csv;charset=utf-8"
+                    }
+                );
+
+            const enlace =
+                document.createElement(
+                    "a"
+                );
+
+            enlace.href =
+                URL.createObjectURL(
+                    archivo
+                );
+
+            enlace.download =
+                "reporte_mantenimientos_signia.csv";
+
+            enlace.click();
+
+            URL.revokeObjectURL(
+                enlace.href
+            );
+        }
+
+
+        document
+            .getElementById(
+                "botonFiltrar"
+            )
+            .addEventListener(
+                "click",
+                aplicarFiltros
+            );
+
+
+        document
+            .getElementById(
+                "botonLimpiar"
+            )
+            .addEventListener(
+                "click",
+                limpiarFiltros
+            );
+
+
+        document
+            .getElementById(
+                "botonExportar"
+            )
+            .addEventListener(
+                "click",
+                exportarCSV
+            );
+
+
+        document
+            .getElementById(
+                "botonImprimir"
+            )
+            .addEventListener(
+                "click",
+                function () {
+                    window.print();
+                }
+            );
+
+
+
+        // =========================================================
+        // REPORTE INDEPENDIENTE DE FALLAS Y SOLUCIONES
+        // =========================================================
+        let fallasCompletasReporte = [];
+        let fallasFiltradasReporte = [];
+
+        function nombreResponsableFalla(falla, solucion = false) {
+            const prefijo = solucion ? "trabajador_solucion_" : "trabajador_";
+            const nombre = [falla[prefijo + "nombres"], falla[prefijo + "apellidos"]]
+                .filter(Boolean).join(" ").trim();
+            return nombre || (solucion ? "Sin identificar" : "Sin identificar (registro anterior)");
+        }
+
+        async function cargarReporteFallas() {
+            const estado = document.getElementById("estadoReporteFallas");
+            estado.hidden = false;
+            estado.className = "estado-reporte";
+            estado.textContent = "Cargando fallas...";
+            try {
+                const token = obtenerTokenReporte();
+                if (!token) throw new Error("Sesión no disponible.");
+                const respuesta = await fetch(SIGNIA_API_REPORTES + "/reportes/fallas", {
+                    headers: { Authorization: "Bearer " + token }
+                });
+                const datos = await respuesta.json();
+                if (!respuesta.ok) {
+                    throw new Error(typeof datos.detail === "string" ? datos.detail : "No se pudieron cargar las fallas.");
+                }
+                if (!Array.isArray(datos)) throw new Error("Formato inesperado en el reporte de fallas.");
+                fallasCompletasReporte = datos;
+                fallasFiltradasReporte = datos;
+                mostrarReporteFallas(datos);
+            } catch (error) {
+                fallasCompletasReporte = [];
+                fallasFiltradasReporte = [];
+                document.getElementById("tablaReporteFallas").hidden = true;
+                estado.className = "estado-reporte mensaje-error";
+                estado.textContent = error.message;
+            }
+        }
+
+        function aplicarFiltrosFallas() {
+            const codigo = document.getElementById("fallaFiltroCodigo").value.trim().toLowerCase();
+            const estado = document.getElementById("fallaFiltroEstado").value;
+            const desde = document.getElementById("fallaFiltroDesde").value;
+            const hasta = document.getElementById("fallaFiltroHasta").value;
+            if (desde && hasta && desde > hasta) {
+                alert("La fecha inicial no puede ser posterior a la final.");
+                return;
+            }
+            fallasFiltradasReporte = fallasCompletasReporte.filter(falla => {
+                if (codigo && !String(falla.codigo_maquina || "").toLowerCase().includes(codigo)) return false;
+                if (estado && falla.estado !== estado) return false;
+                if (desde || hasta) {
+                    if (!falla.fecha_creacion) return false;
+                    const fecha = new Date(falla.fecha_creacion);
+                    if (Number.isNaN(fecha.getTime())) return false;
+                    const fechaLocal = [fecha.getFullYear(), String(fecha.getMonth()+1).padStart(2,"0"), String(fecha.getDate()).padStart(2,"0")].join("-");
+                    if (desde && fechaLocal < desde) return false;
+                    if (hasta && fechaLocal > hasta) return false;
+                }
+                return true;
+            });
+            mostrarReporteFallas(fallasFiltradasReporte);
+        }
+
+        function mostrarReporteFallas(fallas) {
+            const tabla = document.getElementById("tablaReporteFallas");
+            const cuerpo = document.getElementById("cuerpoReporteFallas");
+            const estado = document.getElementById("estadoReporteFallas");
+            document.getElementById("totalFallasReporte").textContent = fallas.length;
+            document.getElementById("totalFallasPendientesReporte").textContent = fallas.filter(f => f.estado === "pendiente").length;
+            document.getElementById("totalFallasSolucionadasReporte").textContent = fallas.filter(f => f.estado === "solucionada").length;
+            cuerpo.innerHTML = "";
+            if (!fallas.length) {
+                tabla.hidden = true;
+                estado.hidden = false;
+                estado.textContent = "No se encontraron fallas con esos filtros.";
+                return;
+            }
+            fallas.forEach(falla => {
+                const fila = document.createElement("tr");
+                const valores = [
+                    falla.codigo_maquina, falla.descripcion,
+                    falla.estado === "solucionada" ? "Solucionada" : "Pendiente",
+                    formatearFecha(falla.fecha_creacion), nombreResponsableFalla(falla),
+                    falla.trabajador_codigo || "", falla.trabajador_area || "",
+                    falla.fecha_solucion ? formatearFecha(falla.fecha_solucion) : "",
+                    falla.estado === "solucionada" ? nombreResponsableFalla(falla, true) : "",
+                    falla.trabajador_solucion_codigo || "", falla.trabajador_solucion_area || ""
+                ];
+                valores.forEach(valor => {
+                    const celda = document.createElement("td");
+                    celda.textContent = valor == null ? "" : String(valor);
+                    fila.appendChild(celda);
+                });
+                cuerpo.appendChild(fila);
+            });
+            estado.hidden = true;
+            tabla.hidden = false;
+        }
+
+        function limpiarFiltrosFallas() {
+            ["fallaFiltroCodigo", "fallaFiltroEstado", "fallaFiltroDesde", "fallaFiltroHasta"]
+                .forEach(id => document.getElementById(id).value = "");
+            fallasFiltradasReporte = fallasCompletasReporte;
+            mostrarReporteFallas(fallasFiltradasReporte);
+        }
+
+        function exportarFallasCSV() {
+            if (!fallasFiltradasReporte.length) {
+                alert("No hay fallas para exportar.");
+                return;
+            }
+            const filas = [[
+                "Código de máquina", "Descripción", "Estado", "Fecha de registro",
+                "Trabajador que registró", "Código del trabajador", "Área del trabajador",
+                "Fecha de solución", "Trabajador que solucionó", "Código del solucionador", "Área del solucionador"
+            ]];
+            fallasFiltradasReporte.forEach(falla => filas.push([
+                falla.codigo_maquina, falla.descripcion, falla.estado,
+                formatearFecha(falla.fecha_creacion), nombreResponsableFalla(falla),
+                falla.trabajador_codigo || "", falla.trabajador_area || "",
+                falla.fecha_solucion ? formatearFecha(falla.fecha_solucion) : "",
+                falla.estado === "solucionada" ? nombreResponsableFalla(falla, true) : "",
+                falla.trabajador_solucion_codigo || "", falla.trabajador_solucion_area || ""
+            ]));
+            const contenido = "\uFEFF" + filas.map(fila => fila.map(protegerValorCSV).join(";")).join("\n");
+            const url = URL.createObjectURL(new Blob([contenido], {type:"text/csv;charset=utf-8"}));
+            const enlace = document.createElement("a");
+            enlace.href = url;
+            enlace.download = "reporte_fallas_soluciones_signia.csv";
+            document.body.appendChild(enlace);
+            enlace.click();
+            enlace.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        document.getElementById("botonFiltrarFallas").addEventListener("click", aplicarFiltrosFallas);
+        document.getElementById("botonLimpiarFallas").addEventListener("click", limpiarFiltrosFallas);
+        document.getElementById("botonExportarFallas").addEventListener("click", exportarFallasCSV);
+
+        document.addEventListener(
+            "signiaSesionLista",
+            function (evento) {
+                const usuario =
+                    evento.detail.usuario;
+
+                const rol =
+                    String(
+                        usuario.rol || ""
+                    )
+                        .trim()
+                        .toLowerCase();
+
+                const permitidos = [
+                    "administracion",
+                    "administración",
+                    "administrador"
+                ];
+
+                if (
+                    !permitidos.includes(
+                        rol
+                    )
+                ) {
+                    window.location.href =
+                        "panel.html";
+
+                    return;
+                }
+
+                if (
+                    rol !== "administrador"
+                ) {
+                    const opcionUsuarios =
+                        document.getElementById(
+                            "opcionUsuarios"
+                        );
+
+                    if (opcionUsuarios) {
+                        opcionUsuarios.style.display =
+                            "none";
+                    }
+                }
+
+                if (
+                    usuario.nombre
+                ) {
+                    document.getElementById(
+                        "avatarUsuario"
+                    ).textContent =
+                        usuario.nombre
+                            .trim()
+                            .split(/\s+/)
+                            .slice(0, 2)
+                            .map(
+                                function (parte) {
+                                    return parte[0];
+                                }
+                            )
+                            .join("")
+                            .toUpperCase();
+                }
+
+                cargarReporte();
+                cargarReporteFallas();
+            }
+        );
+    </script>
+
+</body>
+</html>

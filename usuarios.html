@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Usuarios | SIGNIA</title>
+
+    <link
+        rel="stylesheet"
+        href="css/maquinas.css"
+    >
+
+    <script
+        src="js/sesion.js"
+        defer
+    ></script>
+
+    <style>
+        .contenedor-usuarios {
+            padding: 30px;
+        }
+
+        .tarjeta-usuarios {
+            padding: 25px;
+            margin-bottom: 25px;
+            background: white;
+            border-radius: 18px;
+        }
+
+        .tarjeta-usuarios h2 {
+            margin-bottom: 8px;
+            color: #174d73;
+        }
+
+        .formulario-usuario {
+            display: grid;
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-top: 22px;
+        }
+
+        .grupo-usuario {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .grupo-usuario label {
+            color: #174d73;
+            font-weight: bold;
+        }
+
+        .grupo-usuario input,
+        .grupo-usuario select {
+            padding: 12px 14px;
+            border: 1px solid #cadde9;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        .campo-completo {
+            grid-column: 1 / -1;
+        }
+
+        .boton-crear {
+            padding: 13px 22px;
+            border: none;
+            border-radius: 11px;
+            background: #5e9ed2;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton-crear:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        .mensaje {
+            display: none;
+            padding: 12px 15px;
+            margin-top: 18px;
+            border-radius: 10px;
+        }
+
+        .mensaje.correcto {
+            display: block;
+            color: #176b48;
+            background: #e1f6eb;
+        }
+
+        .mensaje.error {
+            display: block;
+            color: #a33c3c;
+            background: #fde8e8;
+        }
+
+        .barra-listado {
+            display: flex;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .barra-listado input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #cadde9;
+            border-radius: 10px;
+        }
+
+        .barra-listado button {
+            padding: 11px 20px;
+            border: none;
+            border-radius: 10px;
+            background: #5e9ed2;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .tabla-contenedor {
+            overflow-x: auto;
+        }
+
+        .tabla-usuarios {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .tabla-usuarios th,
+        .tabla-usuarios td {
+            padding: 14px;
+            border-bottom: 1px solid #dce8ef;
+            text-align: left;
+        }
+
+        .tabla-usuarios th {
+            color: #174d73;
+            background: #eef6fb;
+        }
+
+        .etiqueta {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .etiqueta-activo {
+            color: #176b48;
+            background: #ddf5e8;
+        }
+
+        .etiqueta-inactivo {
+            color: #a33c3c;
+            background: #fde5e5;
+        }
+
+        .etiqueta-rol {
+            color: #3979a8;
+            background: #e3f1fb;
+        }
+
+        .boton-estado {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 9px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton-desactivar {
+            background: #d05b5b;
+        }
+
+        .boton-activar {
+            background: #36a36a;
+        }
+
+        .estado-lista {
+            padding: 25px;
+            color: #607d90;
+            text-align: center;
+        }
+
+        @media (max-width: 750px) {
+            .formulario-usuario {
+                grid-template-columns: 1fr;
+            }
+
+            .campo-completo {
+                grid-column: auto;
+            }
+
+            .barra-listado {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="css/interfaz.css">
+    <script src="js/interfaz.js"></script>
+    <script src="js/menu-movil.js" defer></script>
+
+</head>
+    <script src="js/config.js"></script>
+<body>
+
+    <aside class="menu-lateral">
+
+        <div class="contenedor-logo">
+            <img
+                src="css/imagenes/logo-signia.png"
+                alt="Logo de SIGNIA"
+                class="logo"
+            >
+
+            <h2>SIGNIA</h2>
+            <p>Gestión de Maquinarias</p>
+        </div>
+
+        <nav class="menu">
+
+            <a
+                href="panel.html"
+                class="opcion"
+            >
+                🏠 Panel principal
+            </a>
+
+            <a
+                href="registrar-maquina.html"
+                class="opcion"
+            >
+                ⚙️ Registrar mantenimiento
+            </a>
+
+            <a
+                href="buscar-maquina.html"
+                class="opcion"
+            >
+                🔍 Buscar por código
+            </a>
+
+            <a
+                href="mantenimientos.html"
+                class="opcion"
+            >
+                🛠️ Mantenimientos
+            </a>
+
+            <a
+                href="reportes.html"
+                class="opcion"
+            >
+                📊 Reportes
+            </a>
+
+            <a
+                href="usuarios.html"
+                class="opcion activa"
+            >
+                👥 Usuarios
+            </a>
+
+        </nav>
+
+        <a
+            href="index.html"
+            id="cerrarSesion"
+            class="cerrar-sesion"
+        >
+            Cerrar sesión
+        </a>
+
+    </aside>
+
+    <main class="contenido-principal">
+
+        <header class="barra-superior">
+
+            <div>
+                <a
+                    href="panel.html"
+                    class="volver"
+                >
+                    ← Volver al panel
+                </a>
+
+                <h1>Administración de usuarios</h1>
+
+                <p>
+                    Crea, consulta, activa y desactiva usuarios.
+                </p>
+            </div>
+
+            <div class="datos-usuario">
+
+                <div
+                    class="avatar"
+                    id="avatarUsuario"
+                >
+                    --
+                </div>
+
+                <div>
+                    <strong id="nombreUsuario">
+                        Cargando...
+                    </strong>
+
+                    <span id="rolUsuario">
+                        Cargando...
+                    </span>
+                </div>
+
+            </div>
+
+        </header>
+
+        <section class="contenedor-usuarios">
+
+            <div class="tarjeta-usuarios">
+
+                <h2>Crear usuario</h2>
+
+                <p>
+                    Completa los datos y asigna el rol correspondiente.
+                </p>
+
+                <form
+                    id="formularioUsuario"
+                    class="formulario-usuario"
+                >
+
+                    <div class="grupo-usuario">
+
+                        <label for="nombre">
+                            Nombre completo *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombre"
+                            minlength="3"
+                            maxlength="150"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="grupo-usuario">
+
+                        <label for="correo">
+                            Correo *
+                        </label>
+
+                        <input
+                            type="email"
+                            id="correo"
+                            autocomplete="off"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="grupo-usuario">
+
+                        <label for="contrasena">
+                            Contraseña temporal *
+                        </label>
+
+                        <input
+                            type="password"
+                            id="contrasena"
+                            minlength="8"
+                            maxlength="100"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="grupo-usuario">
+
+                        <label for="rol">
+                            Rol *
+                        </label>
+
+                        <select
+                            id="rol"
+                            required
+                        >
+
+                            <option value="">
+                                Selecciona un rol
+                            </option>
+
+                            <option value="proveedor">
+                                Proveedor
+                            </option>
+
+                            <option value="tecnico">
+                                Técnico
+                            </option>
+
+                            <option value="operativo">
+                                Personal operativo
+                            </option>
+
+                            <option value="administracion">
+                                Administración
+                            </option>
+
+                            <option value="administrador">
+                                Administrador
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="campo-completo">
+
+                        <button
+                            type="submit"
+                            class="boton-crear"
+                            id="botonCrear"
+                        >
+                            Crear usuario
+                        </button>
+
+                        <p
+                            id="mensajeUsuario"
+                            class="mensaje"
+                        ></p>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="tarjeta-usuarios">
+
+                <h2>Usuarios registrados</h2>
+
+                <p>
+                    Consulta y administra las cuentas del sistema.
+                </p>
+
+                <div class="barra-listado">
+
+                    <input
+                        type="search"
+                        id="filtroUsuarios"
+                        placeholder="Buscar por nombre, correo o rol..."
+                    >
+
+                    <button
+                        type="button"
+                        id="botonActualizar"
+                    >
+                        Actualizar
+                    </button>
+
+                </div>
+
+                <div
+                    id="estadoUsuarios"
+                    class="estado-lista"
+                >
+                    Cargando usuarios...
+                </div>
+
+                <div class="tabla-contenedor">
+
+                    <table
+                        class="tabla-usuarios"
+                        id="tablaUsuarios"
+                        hidden
+                    >
+
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="cuerpoUsuarios"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        const API_URL =
+            window.SIGNIA_CONFIG.API_URL;
+
+        let usuariosGuardados = [];
+
+
+        function obtenerToken() {
+            return (
+                localStorage.getItem(
+                    "signia_token"
+                ) ||
+                sessionStorage.getItem(
+                    "signia_token"
+                )
+            );
+        }
+
+
+        function escaparHTML(valor) {
+            const elemento =
+                document.createElement(
+                    "div"
+                );
+
+            elemento.textContent =
+                valor === null ||
+                valor === undefined
+                    ? ""
+                    : String(valor);
+
+            return elemento.innerHTML;
+        }
+
+
+        function nombreRol(rol) {
+            const roles = {
+                proveedor:
+                    "Proveedor",
+
+                tecnico:
+                    "Técnico",
+
+                operativo:
+                    "Personal operativo",
+
+                administracion:
+                    "Administración",
+
+                administrador:
+                    "Administrador"
+            };
+
+            return (
+                roles[rol] ||
+                rol ||
+                "No registrado"
+            );
+        }
+
+
+        function mostrarMensajeUsuario(
+            texto,
+            tipo
+        ) {
+            const mensaje =
+                document.getElementById(
+                    "mensajeUsuario"
+                );
+
+            mensaje.className =
+                "mensaje " + tipo;
+
+            mensaje.textContent =
+                texto;
+        }
+
+
+        async function cargarUsuarios() {
+            const estado =
+                document.getElementById(
+                    "estadoUsuarios"
+                );
+
+            const tabla =
+                document.getElementById(
+                    "tablaUsuarios"
+                );
+
+            estado.hidden = false;
+
+            estado.textContent =
+                "Cargando usuarios...";
+
+            tabla.hidden = true;
+
+            try {
+                const respuesta =
+                    await fetch(
+                        API_URL + "/usuarios",
+                        {
+                            headers: {
+                                Authorization:
+                                    "Bearer " +
+                                    obtenerToken()
+                            }
+                        }
+                    );
+
+                const resultado =
+                    await respuesta.json();
+
+                if (!respuesta.ok) {
+                    throw new Error(
+                        resultado.detail ||
+                        "No se pudieron cargar los usuarios."
+                    );
+                }
+
+                usuariosGuardados =
+                    resultado;
+
+                mostrarUsuarios(
+                    usuariosGuardados
+                );
+
+            } catch (error) {
+                estado.hidden = false;
+
+                estado.textContent =
+                    error.message;
+            }
+        }
+
+
+        function mostrarUsuarios(usuarios) {
+            const estado =
+                document.getElementById(
+                    "estadoUsuarios"
+                );
+
+            const tabla =
+                document.getElementById(
+                    "tablaUsuarios"
+                );
+
+            const cuerpo =
+                document.getElementById(
+                    "cuerpoUsuarios"
+                );
+
+            cuerpo.innerHTML = "";
+
+            if (!usuarios.length) {
+                tabla.hidden = true;
+
+                estado.hidden = false;
+
+                estado.textContent =
+                    "No hay usuarios para mostrar.";
+
+                return;
+            }
+
+            usuarios.forEach(
+                function (usuario) {
+                    const fila =
+                        document.createElement(
+                            "tr"
+                        );
+
+                    fila.innerHTML = `
+                        <td>
+                            ${escaparHTML(
+                                usuario.nombre
+                            )}
+                        </td>
+
+                        <td>
+                            ${escaparHTML(
+                                usuario.correo
+                            )}
+                        </td>
+
+                        <td>
+                            <span class="etiqueta etiqueta-rol">
+                                ${escaparHTML(
+                                    nombreRol(
+                                        usuario.rol
+                                    )
+                                )}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="etiqueta ${
+                                usuario.activo
+                                    ? "etiqueta-activo"
+                                    : "etiqueta-inactivo"
+                            }">
+                                ${
+                                    usuario.activo
+                                        ? "Activo"
+                                        : "Inactivo"
+                                }
+                            </span>
+                        </td>
+
+                        <td>
+                            <button
+                                type="button"
+                                class="boton-estado ${
+                                    usuario.activo
+                                        ? "boton-desactivar"
+                                        : "boton-activar"
+                                }"
+                                data-id="${usuario.id}"
+                                data-activo="${usuario.activo}"
+                            >
+                                ${
+                                    usuario.activo
+                                        ? "Desactivar"
+                                        : "Activar"
+                                }
+                            </button>
+                        </td>
+                    `;
+
+                    cuerpo.appendChild(
+                        fila
+                    );
+                }
+            );
+
+            estado.hidden = true;
+
+            tabla.hidden = false;
+
+            document
+                .querySelectorAll(
+                    ".boton-estado"
+                )
+                .forEach(
+                    function (boton) {
+                        boton.addEventListener(
+                            "click",
+                            function () {
+                                const id =
+                                    Number(
+                                        boton.dataset.id
+                                    );
+
+                                const activoActual =
+                                    boton.dataset.activo ===
+                                    "true";
+
+                                cambiarEstado(
+                                    id,
+                                    !activoActual
+                                );
+                            }
+                        );
+                    }
+                );
+        }
+
+
+        async function cambiarEstado(
+            usuarioId,
+            nuevoEstado
+        ) {
+            const accion =
+                nuevoEstado
+                    ? "activar"
+                    : "desactivar";
+
+            const confirmado =
+                confirm(
+                    "¿Deseas " +
+                    accion +
+                    " este usuario?"
+                );
+
+            if (!confirmado) {
+                return;
+            }
+
+            try {
+                const respuesta =
+                    await fetch(
+                        API_URL +
+                        "/usuarios/" +
+                        usuarioId +
+                        "/estado",
+                        {
+                            method: "PATCH",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+
+                                Authorization:
+                                    "Bearer " +
+                                    obtenerToken()
+                            },
+
+                            body: JSON.stringify(
+                                {
+                                    activo:
+                                        nuevoEstado
+                                }
+                            )
+                        }
+                    );
+
+                const resultado =
+                    await respuesta.json();
+
+                if (!respuesta.ok) {
+                    throw new Error(
+                        resultado.detail ||
+                        "No se pudo actualizar el usuario."
+                    );
+                }
+
+                await cargarUsuarios();
+
+            } catch (error) {
+                alert(
+                    error.message
+                );
+            }
+        }
+
+
+        document
+            .getElementById(
+                "formularioUsuario"
+            )
+            .addEventListener(
+                "submit",
+                async function (evento) {
+                    evento.preventDefault();
+
+                    const boton =
+                        document.getElementById(
+                            "botonCrear"
+                        );
+
+                    const mensaje =
+                        document.getElementById(
+                            "mensajeUsuario"
+                        );
+
+                    const datos = {
+                        nombre:
+                            document
+                                .getElementById(
+                                    "nombre"
+                                )
+                                .value
+                                .trim(),
+
+                        correo:
+                            document
+                                .getElementById(
+                                    "correo"
+                                )
+                                .value
+                                .trim()
+                                .toLowerCase(),
+
+                        contrasena:
+                            document
+                                .getElementById(
+                                    "contrasena"
+                                )
+                                .value,
+
+                        rol:
+                            document
+                                .getElementById(
+                                    "rol"
+                                )
+                                .value
+                    };
+
+                    boton.disabled = true;
+
+                    boton.textContent =
+                        "Creando usuario...";
+
+                    mensaje.className =
+                        "mensaje";
+
+                    mensaje.textContent =
+                        "";
+
+                    try {
+                        const respuesta =
+                            await fetch(
+                                API_URL +
+                                "/usuarios",
+                                {
+                                    method: "POST",
+
+                                    headers: {
+                                        "Content-Type":
+                                            "application/json",
+
+                                        Authorization:
+                                            "Bearer " +
+                                            obtenerToken()
+                                    },
+
+                                    body:
+                                        JSON.stringify(
+                                            datos
+                                        )
+                                }
+                            );
+
+                        const resultado =
+                            await respuesta.json();
+
+                        if (!respuesta.ok) {
+                            throw new Error(
+                                resultado.detail ||
+                                "No se pudo crear el usuario."
+                            );
+                        }
+
+                        mostrarMensajeUsuario(
+                            "Usuario creado correctamente.",
+                            "correcto"
+                        );
+
+                        evento.target.reset();
+
+                        await cargarUsuarios();
+
+                    } catch (error) {
+                        mostrarMensajeUsuario(
+                            error.message,
+                            "error"
+                        );
+
+                    } finally {
+                        boton.disabled = false;
+
+                        boton.textContent =
+                            "Crear usuario";
+                    }
+                }
+            );
+
+
+        document
+            .getElementById(
+                "filtroUsuarios"
+            )
+            .addEventListener(
+                "input",
+                function () {
+                    const texto =
+                        this.value
+                            .trim()
+                            .toLowerCase();
+
+                    if (!texto) {
+                        mostrarUsuarios(
+                            usuariosGuardados
+                        );
+
+                        return;
+                    }
+
+                    const filtrados =
+                        usuariosGuardados.filter(
+                            function (usuario) {
+                                return (
+                                    usuario.nombre +
+                                    " " +
+                                    usuario.correo +
+                                    " " +
+                                    nombreRol(
+                                        usuario.rol
+                                    )
+                                )
+                                    .toLowerCase()
+                                    .includes(
+                                        texto
+                                    );
+                            }
+                        );
+
+                    mostrarUsuarios(
+                        filtrados
+                    );
+                }
+            );
+
+
+        document
+            .getElementById(
+                "botonActualizar"
+            )
+            .addEventListener(
+                "click",
+                cargarUsuarios
+            );
+
+
+        document.addEventListener(
+            "signiaSesionLista",
+            function (evento) {
+                const usuario =
+                    evento.detail.usuario;
+
+                const rol =
+                    String(
+                        usuario.rol || ""
+                    )
+                        .trim()
+                        .toLowerCase();
+
+                if (
+                    rol !== "administrador"
+                ) {
+                    window.location.href =
+                        "panel.html";
+
+                    return;
+                }
+
+                if (
+                    usuario.nombre
+                ) {
+                    const avatar =
+                        document.getElementById(
+                            "avatarUsuario"
+                        );
+
+                    avatar.textContent =
+                        usuario.nombre
+                            .trim()
+                            .split(/\s+/)
+                            .slice(0, 2)
+                            .map(
+                                function (parte) {
+                                    return parte[0];
+                                }
+                            )
+                            .join("")
+                            .toUpperCase();
+                }
+
+                cargarUsuarios();
+            }
+        );
+    </script>
+
+</body>
+</html>

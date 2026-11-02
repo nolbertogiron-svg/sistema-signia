@@ -1,0 +1,439 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Identificar trabajador | SIGNIA</title>
+
+    <link rel="stylesheet" href="css/estilos.css">
+
+    <style>
+        .tarjeta-identificacion {
+            width: 100%;
+            max-width: 440px;
+            margin: auto;
+            padding: 30px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 12px 35px rgba(25, 67, 99, .12);
+        }
+
+        .tarjeta-identificacion h2 {
+            color: #214b68;
+            margin-bottom: 10px;
+        }
+
+        .tarjeta-identificacion p {
+            color: #607d8b;
+            line-height: 1.5;
+        }
+
+        .campo-trabajador {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin: 18px 0;
+        }
+
+        .campo-trabajador label {
+            font-weight: 600;
+            color: #214b68;
+        }
+
+        .campo-trabajador input {
+            padding: 13px;
+            border: 1px solid #c8dbe8;
+            border-radius: 10px;
+            font-size: 15px;
+        }
+
+        .campo-trabajador input:focus {
+            outline: 2px solid #86bce2;
+        }
+
+        .boton-identificar {
+            width: 100%;
+            padding: 14px;
+            border: 0;
+            border-radius: 11px;
+            background: #5194c8;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .boton-identificar:disabled {
+            opacity: .65;
+            cursor: wait;
+        }
+
+        .identificacion-error {
+            color: #bd3434;
+        }
+
+        .identificacion-exito {
+            color: #168354;
+        }
+
+        .mensaje-identificacion {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .boton-volver {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #3979a8;
+            text-decoration: none;
+        }
+
+        .area-identificacion {
+            font-weight: 700;
+            color: #214b68;
+        }
+    </style>
+    <link rel="stylesheet" href="css/interfaz.css">
+    <script src="js/interfaz.js"></script>
+</head>
+    <script src="js/config.js"></script>
+<body>
+    <main class="contenedor-login">
+
+        <section class="panel-informativo">
+            <div class="contenido-panel">
+
+                <div class="logo-temporal">
+                    <img
+                        src="css/imagenes/logo-signia.png"
+                        alt="Logo de SIGNIA"
+                        class="logo"
+                    >
+                </div>
+
+                <h1>Identificación del trabajador</h1>
+
+                <p>
+                    Para ingresar al Sistema de Gestión de
+                    Maquinarias, identifica al trabajador
+                    que utilizará la cuenta del área.
+                </p>
+
+                <div class="decoracion"></div>
+            </div>
+        </section>
+
+        <section class="panel-login">
+            <div class="tarjeta-identificacion">
+
+                <h2>Datos del trabajador</h2>
+
+                <p>
+                    Cuenta del área:
+                    <span
+                        class="area-identificacion"
+                        id="nombreArea"
+                    >Cargando...</span>
+                </p>
+
+                <form id="formularioIdentificacion">
+
+                    <div class="campo-trabajador">
+                        <label for="nombres">
+                            Nombres *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombres"
+                            maxlength="100"
+                            minlength="2"
+                            autocomplete="given-name"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo-trabajador">
+                        <label for="apellidos">
+                            Apellidos *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="apellidos"
+                            maxlength="150"
+                            minlength="2"
+                            autocomplete="family-name"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo-trabajador">
+                        <label for="codigoEmpleado">
+                            Código de empleado *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="codigoEmpleado"
+                            inputmode="numeric"
+                            pattern="[0-9]{1,5}"
+                            maxlength="5"
+                            placeholder="Ejemplo: 00125"
+                            autocomplete="off"
+                            required
+                        >
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="boton-identificar"
+                        id="botonIdentificar"
+                    >
+                        Verificar e ingresar
+                    </button>
+
+                    <p
+                        class="mensaje-identificacion"
+                        id="mensajeIdentificacion"
+                        aria-live="polite"
+                    ></p>
+                </form>
+
+                <a
+                    href="index.html"
+                    class="boton-volver"
+                    id="volverLogin"
+                >
+                    ← Cambiar cuenta del área
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+
+        function obtenerTokenInicial() {
+            return (
+                sessionStorage.getItem("signia_token") ||
+                localStorage.getItem("signia_token")
+            );
+        }
+
+        function obtenerCuentaGuardada() {
+            const texto = (
+                sessionStorage.getItem("signia_usuario") ||
+                localStorage.getItem("signia_usuario")
+            );
+
+            if (!texto) return null;
+
+            try {
+                return JSON.parse(texto);
+            } catch {
+                return null;
+            }
+        }
+
+        function limpiarAcceso() {
+            for (const almacenamiento of [
+                sessionStorage,
+                localStorage
+            ]) {
+                almacenamiento.removeItem("signia_token");
+                almacenamiento.removeItem("signia_usuario");
+                almacenamiento.removeItem("signia_trabajador");
+            }
+        }
+
+        function obtenerAlmacenamientoActivo() {
+            if (sessionStorage.getItem("signia_token")) {
+                return sessionStorage;
+            }
+
+            return localStorage;
+        }
+
+        function mostrarMensaje(texto, error = false) {
+            const mensaje = document.getElementById(
+                "mensajeIdentificacion"
+            );
+
+            mensaje.textContent = texto;
+            mensaje.className =
+                "mensaje-identificacion " +
+                (error
+                    ? "identificacion-error"
+                    : "identificacion-exito");
+        }
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            async function () {
+
+                const token = obtenerTokenInicial();
+
+                if (!token) {
+                    window.location.replace("index.html");
+                    return;
+                }
+
+                const cuenta = obtenerCuentaGuardada();
+
+                if (cuenta) {
+                    document.getElementById(
+                        "nombreArea"
+                    ).textContent = cuenta.nombre || "SIGNIA";
+                }
+
+                // Comprobar que el token inicial
+                // corresponde a una cuenta válida.
+                try {
+                    const respuesta = await fetch(
+                        `${API_URL}/auth/me`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`
+                            }
+                        }
+                    );
+
+                    if (!respuesta.ok) {
+                        throw new Error("Sesión no válida");
+                    }
+
+                } catch {
+                    limpiarAcceso();
+                    window.location.replace("index.html");
+                    return;
+                }
+
+                const formulario = document.getElementById(
+                    "formularioIdentificacion"
+                );
+
+                formulario.addEventListener(
+                    "submit",
+                    async function (evento) {
+                        evento.preventDefault();
+
+                        const nombres =
+                            document.getElementById("nombres")
+                                .value.trim();
+
+                        const apellidos =
+                            document.getElementById("apellidos")
+                                .value.trim();
+
+                        const codigoEmpleado =
+                            document.getElementById(
+                                "codigoEmpleado"
+                            ).value.trim();
+
+                        if (!/^[0-9]{1,5}$/.test(codigoEmpleado)) {
+                            mostrarMensaje(
+                                "El código debe contener de 1 a 5 dígitos.",
+                                true
+                            );
+                            return;
+                        }
+
+                        const boton = document.getElementById(
+                            "botonIdentificar"
+                        );
+
+                        boton.disabled = true;
+                        boton.textContent = "Verificando...";
+
+                        try {
+                            const respuesta = await fetch(
+                                `${API_URL}/auth/identificar-trabajador`,
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type":
+                                            "application/json",
+                                        Authorization:
+                                            `Bearer ${token}`
+                                    },
+                                    body: JSON.stringify({
+                                        nombres,
+                                        apellidos,
+                                        codigo_empleado:
+                                            codigoEmpleado
+                                    })
+                                }
+                            );
+
+                            const resultado = await respuesta.json();
+
+                            if (!respuesta.ok) {
+                                throw new Error(
+                                    typeof resultado.detail === "string"
+                                        ? resultado.detail
+                                        : "No se pudo verificar al trabajador."
+                                );
+                            }
+
+                            if (
+                                !resultado.access_token ||
+                                !resultado.trabajador
+                            ) {
+                                throw new Error(
+                                    "Respuesta de identificación incompleta."
+                                );
+                            }
+
+                            const almacenamiento =
+                                obtenerAlmacenamientoActivo();
+
+                            almacenamiento.setItem(
+                                "signia_token",
+                                resultado.access_token
+                            );
+
+                            almacenamiento.setItem(
+                                "signia_usuario",
+                                JSON.stringify(resultado.usuario)
+                            );
+
+                            almacenamiento.setItem(
+                                "signia_trabajador",
+                                JSON.stringify(resultado.trabajador)
+                            );
+
+                            mostrarMensaje(
+                                "Identificación correcta. Ingresando..."
+                            );
+
+                            window.location.replace("panel.html");
+
+                        } catch (error) {
+                            mostrarMensaje(error.message, true);
+
+                            boton.disabled = false;
+                            boton.textContent =
+                                "Verificar e ingresar";
+                        }
+                    }
+                );
+
+                document.getElementById(
+                    "volverLogin"
+                ).addEventListener(
+                    "click",
+                    function () {
+                        limpiarAcceso();
+                    }
+                );
+            }
+        );
+    </script>
+</body>
+</html>
