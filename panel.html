@@ -77,6 +77,10 @@
             gap: 18px;
         }
 
+        #resumenAdministrativo > .grupo-dashboard:first-child .grid-dashboard {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
         .grid-dashboard.dos-columnas {
             grid-template-columns: repeat(2, minmax(220px, 1fr));
         }
@@ -200,7 +204,8 @@
 
         @media (max-width: 1100px) {
             .grid-dashboard,
-            .grid-dashboard.dos-columnas {
+            .grid-dashboard.dos-columnas,
+            #resumenAdministrativo > .grupo-dashboard:first-child .grid-dashboard {
                 grid-template-columns: repeat(2, minmax(220px, 1fr));
             }
         }
@@ -213,7 +218,8 @@
 
         @media (max-width: 700px) {
             .grid-dashboard,
-            .grid-dashboard.dos-columnas {
+            .grid-dashboard.dos-columnas,
+            #resumenAdministrativo > .grupo-dashboard:first-child .grid-dashboard {
                 grid-template-columns: 1fr;
             }
 
@@ -286,7 +292,6 @@
         </a>
     </aside>
 
-    <span id="equiposInoperativos" hidden>0</span>
 <main class="contenido-principal">
         <header class="barra-superior">
             <div>
@@ -413,6 +418,14 @@
                         <div>
                             <p>Presentan fallas</p>
                             <h3 id="equiposFallas">...</h3>
+                        </div>
+                    </article>
+
+                    <article class="tarjeta-resumen">
+                        <span class="icono" style="background:#e7ebf0;color:#64748b;">⛔</span>
+                        <div>
+                            <p>Inoperativas</p>
+                            <h3 id="equiposInoperativos">...</h3>
                         </div>
                     </article>
                 </div>
@@ -1154,6 +1167,7 @@
                     "totalMaquinas",
                     "equiposOperables",
                     "equiposRevision",
+                    "equiposInoperativos",
                     "equiposFallas",
                     "totalPreventivos",
                     "totalCorrectivos",
