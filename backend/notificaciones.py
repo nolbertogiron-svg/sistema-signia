@@ -64,6 +64,7 @@ def obtener_texto_estado(estado):
     estados = {
         'operable': 'Operable',
         'en_revision': 'En revisión',
+        'inoperativo': 'Inoperativo',
         'presenta_fallas': 'Presenta fallas',
         'en_reparacion': 'En reparación',
         'en_observacion': 'En observación',

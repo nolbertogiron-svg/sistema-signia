@@ -153,6 +153,8 @@ class Trabajador(Base):
 # =========================================================
 
 class Maquina(Base):
+    categoria = Column(String(30), nullable=False, default="maquinaria", server_default="maquinaria")
+
     __tablename__ = "maquinas"
 
     id = Column(

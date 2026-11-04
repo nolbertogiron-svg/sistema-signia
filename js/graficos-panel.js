@@ -17,7 +17,7 @@
         const configuraciones = [
             {
                 titulo: "Estado operativo",
-                descripcion: "Condición registrada de las máquinas.",
+                descripcion: "Condición registrada de todos los activos.",
                 categorias: [
                     {
                         nombre: "Operables",
@@ -33,7 +33,8 @@
                         nombre: "Presentan fallas",
                         id: "equiposFallas",
                         color: "#ef4444"
-                    }
+                    },
+                    {nombre: "Inoperativos", id: "equiposInoperativos", color: "#64748b"}
                 ]
             },
             {
@@ -105,7 +106,7 @@
             totalVisible.textContent = "—";
 
             const etiqueta = document.createElement("span");
-            etiqueta.textContent = "máquinas";
+            etiqueta.textContent = "activos";
 
             centro.append(totalVisible, etiqueta);
             dona.appendChild(centro);
@@ -224,7 +225,7 @@
 
                         fila.title =
                             categoria.nombre + ": " +
-                            cantidad + " máquinas";
+                            cantidad + " activos";
 
                         fila.append(punto, nombre, cifra);
                         leyenda.appendChild(fila);
@@ -236,10 +237,10 @@
                         "conic-gradient(" + segmentos.join(", ") + ")";
 
                     mensaje.textContent =
-                        "Porcentajes sobre " + total + " máquinas.";
+                        "Porcentajes sobre " + total + " activos.";
                 } else {
                     mensaje.textContent =
-                        "No hay máquinas registradas para graficar.";
+                        "No hay activos registradas para graficar.";
                 }
             }
 

@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+    <script src="js/config.js"></script>
     <meta charset="UTF-8">
 
     <meta
@@ -216,7 +217,6 @@
     <script src="js/registro-secciones.js" defer></script>
     <script src="js/menu-movil.js" defer></script>
 </head>
-    <script src="js/config.js"></script>
 <body>
 
     <aside class="menu-lateral">
@@ -343,7 +343,7 @@
                     <h2>Buscar equipo</h2>
 
                     <p>
-                        Escribe el código de la máquina.
+                        Escribe el código del activo.
                     </p>
                 </div>
 
@@ -488,7 +488,7 @@
                     <div class="grupo-campo">
 
                         <label for="estadoEquipo">
-                            Estado de la máquina *
+                            Estado del activo *
                         </label>
 
                         <select
@@ -506,6 +506,7 @@
                             <option value="presenta_fallas">
                                 🔴 Presenta fallas
                             </option>
+<option value="inoperativo">⚫ Inoperativo</option>
                         </select>
 
                     <div class="grupo-campo">
@@ -1671,6 +1672,7 @@ if (fallasSeleccionadas.length > 0) {
         );
     </script>
 
+    <script src="js/activos.js" defer></script>
 </body>
 
 </html>

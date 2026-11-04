@@ -167,6 +167,8 @@ class ArchivoMantenimientoRespuesta(BaseModel):
 # =========================================================
 
 class MaquinaRespuesta(BaseModel):
+    categoria: str = "maquinaria"
+
     model_config = ConfigDict(
         from_attributes=True
     )
@@ -314,3 +316,25 @@ class FallaRespuesta(BaseModel):
 
 class MensajeRespuesta(BaseModel):
     mensaje: str
+
+
+class ActivoCrear(BaseModel):
+    codigo: str = Field(min_length=1, max_length=50)
+    categoria: str
+    seccion: str = Field(min_length=1, max_length=100)
+    local: str = Field(min_length=1, max_length=50)
+    proveedor: Optional[str] = Field(default=None, max_length=200)
+    ubicacion_referencia: str = Field(min_length=1, max_length=500)
+    tipo_activo: str = Field(min_length=1, max_length=150)
+    marca: str = Field(default="No aplica", min_length=1, max_length=100)
+    serie: str = Field(default="No aplica", min_length=1, max_length=150)
+    modelo: str = Field(default="No aplica", min_length=1, max_length=150)
+    estado_equipo: str = "operable"
+
+    @field_validator("codigo", "seccion", "local", "ubicacion_referencia", "tipo_activo", "marca", "serie", "modelo")
+    @classmethod
+    def limpiar_texto(cls, valor):
+        valor = valor.strip()
+        if not valor:
+            raise ValueError("El campo no puede estar vacío")
+        return valor

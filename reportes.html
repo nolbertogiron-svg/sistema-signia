@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script src="js/config.js"></script>
     <meta charset="UTF-8">
 
     <meta
@@ -224,7 +225,6 @@
     <script src="js/menu-movil.js" defer></script>
 
 </head>
-    <script src="js/config.js"></script>
 <body>
 
     <aside class="menu-lateral">
@@ -542,7 +542,7 @@
                         <thead>
                             <tr>
                                 <th>Fecha</th>
-                                <th>Código</th>
+                                <th>Código</th><th>Categoría</th><th>Estado actual del activo</th>
                                 <th>Tipo</th>
                                 <th>Trabajador</th>
                                 <th>Código de empleado</th>
@@ -1019,6 +1019,8 @@
                             )}
                         </td>
 
+                        <td>${escaparHTML(registro.categoria_activo || "maquinaria")}</td>
+                        <td>${escaparHTML(({operable:"Operable", en_revision:"En revisión", presenta_fallas:"Presenta fallas", inoperativo:"Inoperativo"})[registro.estado_actual_activo] || "No disponible")}</td>
                         <td>
                             <span class="etiqueta-tipo">
                                 ${escaparHTML(
@@ -1150,7 +1152,9 @@
             const filas = [
                 [
                     "Fecha",
-                    "Código de máquina",
+                    "Código de activo",
+                    "Categoría",
+                    "Estado actual del activo",
                     "Tipo de mantenimiento",
                     "Trabajador",
                     "Código de empleado",
@@ -1171,6 +1175,8 @@
                                 registro.fecha_hora
                             ),
                             registro.codigo_maquina,
+                            registro.categoria_activo || "maquinaria",
+                            registro.estado_actual_activo || "No disponible",
                             nombreTipo(
                                 registro.tipo_mantenimiento
                             ),
@@ -1487,5 +1493,6 @@
         );
     </script>
 
+    <script src="js/activos.js" defer></script>
 </body>
 </html>

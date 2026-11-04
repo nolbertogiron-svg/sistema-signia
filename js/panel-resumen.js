@@ -10,6 +10,7 @@
         }
 
         const indicadores = [
+            {id:"equiposInoperativos", titulo:"Activos inoperativos", descripcion:"Activos fuera de servicio.", clase:"atencion-azul"},
             {
                 id: "equiposFallas",
                 titulo: "Máquinas con fallas",

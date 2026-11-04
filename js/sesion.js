@@ -79,6 +79,7 @@ function paginaInicioPorRol() {
 
 function rolPuedeEntrarPagina(rol, pagina) {
     const permisos = {
+        "nuevo-activo.html": ["administracion", "administrador"],
         "panel.html": [
             "proveedor",
             "tecnico",

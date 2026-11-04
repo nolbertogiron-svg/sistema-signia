@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script src="js/config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel principal | SIGNIA</title>
@@ -241,7 +242,6 @@
     <link rel="stylesheet" href="css/prediccion-demo.css">
     <script src="js/prediccion-demo.js" defer></script>
 </head>
-    <script src="js/config.js"></script>
 <body>
     <aside class="menu-lateral">
         <div class="contenedor-logo">
@@ -286,7 +286,8 @@
         </a>
     </aside>
 
-    <main class="contenido-principal">
+    <span id="equiposInoperativos" hidden>0</span>
+<main class="contenido-principal">
         <header class="barra-superior">
             <div>
                 <h1>Panel principal</h1>
@@ -365,7 +366,7 @@
                         <span class="icono azul">⚙️</span>
 
                         <div>
-                            <p>Total de máquinas</p>
+                            <p>Total de activos</p>
                             <h3 id="totalMaquinas">...</h3>
                         </div>
                     </article>
@@ -1052,6 +1053,7 @@
                         resultado.total_correctivos || 0
                     );
 
+                document.dispatchEvent(new CustomEvent("signiaResumenActualizado", {detail: resultado}));
                 colocarTexto(
                     "totalMaquinas",
                     resultado.total_maquinas ?? 0
@@ -1066,6 +1068,8 @@
                     "equiposRevision",
                     resultado.equipos_en_revision ?? 0
                 );
+
+                colocarTexto("equiposInoperativos", resultado.equipos_inoperativos ?? 0);
 
                 colocarTexto(
                     "equiposFallas",
@@ -1335,5 +1339,6 @@
             }
         );
     </script>
+    <script src="js/activos.js" defer></script>
 </body>
 </html>

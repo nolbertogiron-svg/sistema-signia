@@ -29,6 +29,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import func, text
 
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 from auth import router as auth_router
 
@@ -53,6 +54,7 @@ from models import (
 from notificaciones import notificar_nuevo_registro
 
 from schemas import (
+    ActivoCrear,
 
     EstadoMaquinaActualizar,
 
@@ -443,6 +445,12 @@ def obtener_resumen(
         or 0
     )
 
+    equipos_inoperativos = base_datos.query(func.count(Maquina.id)).filter(Maquina.estado_equipo == "inoperativo").scalar() or 0
+    resumen_categorias = {}
+    for categoria in ("maquinaria", "infraestructura", "equipo"):
+        filas = base_datos.query(Maquina.estado_equipo, func.count(Maquina.id)).filter(Maquina.categoria == categoria).group_by(Maquina.estado_equipo).all()
+        resumen_categorias[categoria] = dict(filas)
+
     total_registros = (
         base_datos.query(
             func.count(
@@ -773,6 +781,8 @@ def obtener_resumen(
         "total_observaciones":
             total_observaciones,
 
+        "equipos_inoperativos": equipos_inoperativos,
+        "resumen_categorias": resumen_categorias,
         "equipos_operables":
             equipos_operables,
 
@@ -866,6 +876,7 @@ def obtener_resumen(
 )
 
 def listar_maquinas(
+    categoria: Optional[str] = None,
 
     base_datos: Session = Depends(
 
@@ -883,15 +894,12 @@ def listar_maquinas(
 
 ):
 
-    return (
-
-        base_datos.query(Maquina)
-
-        .order_by(Maquina.codigo)
-
-        .all()
-
-    )
+    consulta = base_datos.query(Maquina)
+    if categoria:
+        if categoria not in ("maquinaria", "infraestructura", "equipo"):
+            raise HTTPException(status_code=400, detail="Categoría no válida")
+        consulta = consulta.filter(Maquina.categoria == categoria)
+    return consulta.order_by(Maquina.codigo).all()
 
 @app.get(
 
@@ -1001,6 +1009,8 @@ def cambiar_estado_maquina(
 
         "presenta_fallas",
 
+        "inoperativo",
+
     }
 
     nombres_estado = {
@@ -1010,6 +1020,8 @@ def cambiar_estado_maquina(
         "en_revision": "En revisión",
 
         "presenta_fallas": "Presenta fallas",
+
+        "inoperativo": "Inoperativo",
 
         "en_reparacion": "Presenta fallas",
 
@@ -1049,7 +1061,7 @@ def cambiar_estado_maquina(
 
                 "en_revision o "
 
-                "presenta_fallas"
+                "presenta_fallas o inoperativo"
 
             ),
 
@@ -1409,6 +1421,8 @@ async def crear_registro(
 
         "presenta_fallas",
 
+        "inoperativo",
+
     }:
 
         raise HTTPException(
@@ -1423,7 +1437,7 @@ async def crear_registro(
 
                 "en_revision o "
 
-                "presenta_fallas"
+                "presenta_fallas o inoperativo"
 
             ),
 
@@ -1918,6 +1932,8 @@ def listar_registros(
 
                     registro.maquina_id,
 
+                "categoria_activo": registro.maquina.categoria if registro.maquina else None,
+                "estado_actual_activo": registro.maquina.estado_equipo if registro.maquina else None,
                 "codigo_maquina": (
 
                     registro.maquina.codigo
@@ -2262,6 +2278,8 @@ def historial_maquina(
             "id":
 
                 maquina.id,
+
+            "categoria": maquina.categoria,
 
             "codigo":
 
@@ -2933,7 +2951,8 @@ def crear_falla_maquina(
 
     )
 
-    maquina.estado_equipo = "presenta_fallas"
+    if maquina.estado_equipo != "inoperativo":
+        maquina.estado_equipo = "presenta_fallas"
 
     try:
 
@@ -3037,7 +3056,7 @@ def solucionar_falla_maquina(
 
         )
 
-        if falla.maquina:
+        if falla.maquina and falla.maquina.estado_equipo != "inoperativo":
 
             if pendientes == 0:
 
@@ -3268,3 +3287,26 @@ app.include_router(
         Depends(permitir_roles(*ROLES_ADMINISTRATIVOS)),
     ],
 )
+
+@app.post("/activos", response_model=MaquinaRespuesta, status_code=201)
+def crear_activo(
+    datos: ActivoCrear,
+    base_datos: Session = Depends(obtener_base_datos),
+    trabajador_actual: Trabajador = Depends(obtener_trabajador_actual),
+    usuario_actual: Usuario = Depends(permitir_roles("administracion", "administrador")),
+):
+    if datos.categoria not in ("maquinaria", "infraestructura", "equipo"):
+        raise HTTPException(status_code=400, detail="Categoría no válida")
+    if datos.estado_equipo not in ("operable", "en_revision", "presenta_fallas", "inoperativo"):
+        raise HTTPException(status_code=400, detail="Estado no válido")
+    if base_datos.query(Maquina.id).filter(Maquina.codigo == datos.codigo).first():
+        raise HTTPException(status_code=409, detail="Este código ya existe. Utiliza un código único para cada activo.")
+    activo = Maquina(**datos.model_dump())
+    try:
+        base_datos.add(activo)
+        base_datos.commit()
+        base_datos.refresh(activo)
+        return activo
+    except IntegrityError:
+        base_datos.rollback()
+        raise HTTPException(status_code=409, detail="Este código ya existe")

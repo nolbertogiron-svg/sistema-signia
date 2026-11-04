@@ -82,7 +82,7 @@
                 ["registrar-maquina.html", "mantenimientos.html"]
             ],
             [
-                "Equipos",
+                "Maquinarias",
                 ["buscar-maquina.html"]
             ],
             [

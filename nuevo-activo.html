@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registrar nuevo activo | SIGNIA</title>
+<script src="js/config.js"></script><script src="js/sesion.js" defer></script>
+<link rel="stylesheet" href="css/panel.css"><link rel="stylesheet" href="css/interfaz.css">
+<style>
+main{padding:30px;max-width:1100px;margin:0 auto}.ficha-activo{background:var(--fondo-tarjeta,white);border:1px solid #bdcfe1;border-radius:18px;padding:25px}.campos-activo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.campos-activo label{display:flex;flex-direction:column;gap:8px;font-weight:600}.campos-activo input,.campos-activo select{width:100%;box-sizing:border-box;padding:13px;border:1px solid #abc9df;border-radius:10px;font:inherit;background:#f7fbff;color:#163a59}.boton-crear{background:#1769aa;color:white;border:0;border-radius:10px;padding:14px 24px;cursor:pointer;margin-top:20px}.boton-crear:disabled{opacity:.5;cursor:wait}#mensajeActivo{white-space:pre-wrap}#mensajeActivo[data-error="si"]{color:#dc3545}[data-tema="oscuro"] .ficha-activo{background:#1c3042;color:#eaf4ff}@media(max-width:650px){.campos-activo{grid-template-columns:1fr}main{padding:15px}}
+</style>
+</head>
+<body>
+<main><a href="panel.html">← Volver al panel</a><h1>Registrar nuevo activo</h1><p>Agrega una maquinaria, infraestructura o equipo al inventario. El código debe ser único.</p>
+<div class="ficha-activo"><form id="formActivo"><div class="campos-activo">
+<label>Categoría *<select name="categoria" required><option value="maquinaria">Maquinaria</option><option value="infraestructura">Infraestructura</option><option value="equipo">Equipo</option></select></label>
+<label>Código *<input name="codigo" maxlength="50" required autocomplete="off"></label>
+<label>Tipo o descripción del activo *<input name="tipo_activo" maxlength="150" required placeholder="Ejemplo: apilador, instalación eléctrica o computadora"></label>
+<label>Sección o área *<input name="seccion" maxlength="100" required></label>
+<label>Local o sede *<input name="local" maxlength="50" required placeholder="Ejemplo: S1"></label>
+<label>Ubicación de referencia *<input name="ubicacion_referencia" maxlength="500" required></label>
+<label>Proveedor<input name="proveedor" maxlength="200"></label>
+<label>Marca<input name="marca" maxlength="100" placeholder="No aplica si corresponde"></label>
+<label>Serie<input name="serie" maxlength="150" placeholder="No aplica si corresponde"></label>
+<label>Modelo<input name="modelo" maxlength="150" placeholder="No aplica si corresponde"></label>
+<label>Estado inicial *<select name="estado_equipo" required><option value="operable">🟢 Operable</option><option value="en_revision">🟠 En revisión</option><option value="presenta_fallas">🔴 Presenta fallas</option><option value="inoperativo">⚫ Inoperativo</option></select></label>
+</div><button class="boton-crear" id="guardarActivo" disabled>Guardar activo</button><p id="mensajeActivo" role="status" aria-live="polite">Validando sesión…</p><a id="consultarActivo" hidden>Consultar activo creado →</a></form></div>
+</main>
+<script src="js/interfaz.js" defer></script><script src="js/activos.js" defer></script><script src="js/nuevo-activo.js" defer></script>
+</body></html>

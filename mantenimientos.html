@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+    <script src="js/config.js"></script>
     <meta charset="UTF-8">
 
     <meta
@@ -259,7 +260,6 @@
     <script src="js/interfaz.js"></script>
     <script src="js/menu-movil.js" defer></script>
 </head>
-    <script src="js/config.js"></script>
 <body>
 
     <aside class="menu-lateral">
@@ -488,6 +488,7 @@
 
             </div>
 
+            <article class="tarjeta-resumen-mantenimiento"><span>Inoperativos</span><strong id="totalInoperativos">0</strong></article>
             <div class="contenedor-tabla">
 
                 <div class="encabezado-tabla">
@@ -658,7 +659,7 @@
             if (
                 valor === "presenta_fallas" ||
                 valor === "en_revision" ||
-                valor === "operable"
+                valor === "operable" || valor === "inoperativo"
             ) {
                 return valor;
             }
@@ -678,7 +679,8 @@
                     "🟡 En revisión",
 
                 presenta_fallas:
-                    "🔴 Presenta fallas"
+                    "🔴 Presenta fallas",
+                inoperativo: "⚫ Inoperativo"
             };
 
             return estados[valor];
@@ -688,9 +690,8 @@
             const valor =
                 estadoNormalizado(estado);
 
-            if (
-                valor === "operable"
-            ) {
+            if (valor === "inoperativo") return "estado-inoperativo";
+            if (valor === "operable") {
                 return "estado-operable";
             }
 
@@ -799,6 +800,7 @@
         }
 
         function mostrarResumen() {
+            document.getElementById("totalInoperativos").textContent = maquinas.filter(m => estadoNormalizado(m.estado_equipo) === "inoperativo").length;
             const totalOperables =
                 maquinas.filter(
                     function (maquina) {
@@ -1067,6 +1069,7 @@
                                             >
                                                 🔴 Presenta fallas
                                             </option>
+<option value="inoperativo" ${estadoActual === "inoperativo" ? "selected" : ""}>⚫ Inoperativo</option>
                                         </select>
 
                                         <button
@@ -1352,6 +1355,7 @@
         cargarDatos();
     </script>
 
+    <script src="js/activos.js" defer></script>
 </body>
 
 </html>

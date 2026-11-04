@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+    <script src="js/config.js"></script>
     <meta charset="UTF-8">
 
     <meta
@@ -335,7 +336,6 @@
     <script src="js/interfaz.js"></script>
     <script src="js/menu-movil.js" defer></script>
 </head>
-    <script src="js/config.js"></script>
 <body>
     <aside class="menu-lateral">
         <div class="contenedor-logo">
@@ -575,6 +575,7 @@
                 operable: "🟢 Operable",
                 en_revision: "🟡 En revisión",
                 presenta_fallas: "🔴 Presenta fallas",
+                inoperativo: "⚫ Inoperativo",
                 en_reparacion: "🔴 Presenta fallas",
                 en_observacion: "🟡 En revisión"
             };
@@ -606,6 +607,7 @@
             ];
 
             const campos = [
+                ["Categoría", (window.SIGNIA_ACTIVOS?.categorias[maquina.categoria || "maquinaria"] || ["Maquinarias"])[0]],
                 ["Estado actual", nombreEstado(maquina.estado_equipo)],
                 ...camposFallas,
                 ["Sección", maquina.seccion],
@@ -630,6 +632,7 @@
             ).join("");
 
             seccionDatos.classList.remove("oculto");
+            window.signiaMostrarEstadoActivo?.(maquina);
         }
 
         async function cargarFallasMaquina(codigo) {
@@ -735,7 +738,7 @@
                         </div>
 
                         <div class="sin-archivos">
-                            Esta máquina no tiene fallas registradas.
+                            Este activo no tiene fallas registradas.
                         </div>
                     </div>
                 `;
@@ -871,7 +874,7 @@
         function mostrarHistorial(registros, cantidad, codigoMaquina) {
             const titulo = document.getElementById("tituloSeccionHistorial");
             if (esOperador()) {
-                titulo.textContent = "Fallas de la máquina";
+                titulo.textContent = "Fallas del activo";
                 document.getElementById("cantidadHistorial").textContent =
                     "Se muestran únicamente las fallas registradas hoy.";
                 listaHistorial.innerHTML = mostrarFallasParaOperador();
@@ -889,7 +892,7 @@
             if (!registros.length) {
                 listaHistorial.innerHTML = `
                     <div class="sin-registros">
-                        Esta máquina todavía no tiene mantenimientos registrados.
+                        Este activo todavía no tiene mantenimientos registrados.
                     </div>
 
                     ${mostrarFallas()}
@@ -922,7 +925,7 @@
                         <article class="registro">
                             <div class="cabecera-registro">
                                 <h3>
-                                    Registro de máquina ${escapar(codigoMaquina)}
+                                    Registro del activo ${escapar(codigoMaquina)}
                                 </h3>
 
                                 <span class="fecha-registro">
@@ -1407,10 +1410,14 @@
                     if (!respuesta.ok) {
                         throw new Error(
                             resultado.detail ||
-                            "Máquina no encontrada"
+                            "Activo no encontrado"
                         );
                     }
 
+                    const categoriaElegida = window.SIGNIA_CATEGORIA || "maquinaria";
+                    if ((resultado.maquina.categoria || "maquinaria") !== categoriaElegida) {
+                        throw new Error("El código pertenece a otra categoría. Selecciona el bloque correspondiente.");
+                    }
                     await cargarFallasMaquina(codigo);
 
                     mostrarMaquina(resultado.maquina);
@@ -1422,7 +1429,7 @@
                     );
 
                     mostrarMensaje(
-                        "Máquina encontrada correctamente.",
+                        "Activo encontrado correctamente.",
                         "correcto"
                     );
 
@@ -1483,6 +1490,7 @@
             );
         }
     </script>
+    <script src="js/activos.js" defer></script>
 </body>
 
 </html>
