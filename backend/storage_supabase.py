@@ -252,3 +252,22 @@ def comprobar_storage():
 
 if __name__ == "__main__":
     comprobar_storage()
+
+
+
+# Eliminar archivos de Supabase Storage
+
+def eliminar_archivos(rutas: list[str]):
+    if not rutas:
+        return
+
+    rutas_validas = [
+        ruta.strip()
+        for ruta in rutas
+        if isinstance(ruta, str) and ruta.strip()
+    ]
+
+    if not rutas_validas:
+        return
+
+    supabase.storage.from_(SUPABASE_BUCKET).remove(rutas_validas)
