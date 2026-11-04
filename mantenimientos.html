@@ -489,6 +489,20 @@
             </div>
 
             <article class="tarjeta-resumen-mantenimiento"><span>Inoperativos</span><strong id="totalInoperativos">0</strong></article>
+            <section class="contenedor-tabla" aria-labelledby="tituloEjecuciones">
+                <h2 id="tituloEjecuciones">Mantenimientos preventivos y correctivos del mes</h2>
+                <label for="mesEjecuciones">Mes</label>
+                <input type="month" id="mesEjecuciones" required>
+                <p>Los registros anteriores sin fecha de ejecución se agrupan por su fecha de registro.</p>
+                <p id="estadoEjecuciones" role="status"></p>
+                <div style="overflow-x:auto">
+                    <table class="tabla-mantenimientos">
+                        <thead><tr><th>Código</th><th>Tipo</th><th>Fecha</th><th>Ejecutado por</th></tr></thead>
+                        <tbody id="filasEjecuciones"></tbody>
+                    </table>
+                </div>
+            </section>
+
             <div class="contenedor-tabla">
 
                 <div class="encabezado-tabla">
@@ -712,6 +726,45 @@
                 .trim();
         }
 
+        const mesEjecuciones = document.getElementById("mesEjecuciones");
+        const fechaLima = new Intl.DateTimeFormat("en-CA", {
+            timeZone: "America/Lima", year: "numeric", month: "2-digit", day: "2-digit"
+        });
+
+        function diaDeRegistro(valor) {
+            const fecha = new Date(valor);
+            if (!valor || Number.isNaN(fecha.getTime())) return "";
+            const partes = Object.fromEntries(fechaLima.formatToParts(fecha).map(p => [p.type, p.value]));
+            return [partes.year, partes.month, partes.day].join("-");
+        }
+
+        mesEjecuciones.value = diaDeRegistro(new Date()).slice(0, 7);
+        mesEjecuciones.addEventListener("change", mostrarEjecuciones);
+
+        function mostrarEjecuciones() {
+            const mes = mesEjecuciones.value;
+            const filas = registros
+                .filter(r => ["preventivo", "correctivo"].includes(tipoNormalizado(r.tipo_mantenimiento)))
+                .map(r => ({registro: r, dia: r.fecha_ejecucion || diaDeRegistro(r.fecha_hora)}))
+                .filter(({dia}) => mes && dia.slice(0, 7) === mes)
+                .sort((a, b) => b.dia.localeCompare(a.dia));
+
+            document.getElementById("filasEjecuciones").innerHTML = filas.map(({registro, dia}) => {
+                const fecha = dia.split("-").reverse().join("/");
+                const tipo = tipoNormalizado(registro.tipo_mantenimiento) === "preventivo" ? "Preventivo" : "Correctivo";
+                const registradoPor = [registro.trabajador_nombres, registro.trabajador_apellidos].filter(Boolean).join(" ");
+                const ejecutor = registro.ejecutado_por || (registradoPor ? "Sin confirmar · Registró: " + registradoPor : "Sin confirmar");
+                return `<tr>
+                    <td>${escaparHTML(registro.codigo_maquina)}</td>
+                    <td>${tipo}</td>
+                    <td>${escaparHTML(fecha)}${registro.fecha_ejecucion ? "" : " (registro)"}</td>
+                    <td>${escaparHTML(ejecutor)}</td>
+                </tr>`;
+            }).join("");
+            document.getElementById("estadoEjecuciones").textContent =
+                !mes ? "Selecciona un mes." : filas.length ? filas.length + " registro(s)." : "Sin mantenimientos para este mes.";
+        }
+
         async function cargarDatos() {
             const token =
                 obtenerToken();
@@ -781,6 +834,7 @@
                     await respuestaRegistros.json();
 
                 mostrarResumen();
+                mostrarEjecuciones();
 
                 mostrarTabla(
                     maquinas
@@ -1091,13 +1145,7 @@
 
                             <a
                                 class="boton-historial"
-                                href="buscar-maquina.html"
-                                onclick="
-                                    sessionStorage.setItem(
-                                        'signia_codigo_busqueda',
-                                        '${escaparHTML(maquina.codigo)}'
-                                    );
-                                "
+                                href="buscar-maquina.html?${escaparHTML(new URLSearchParams({categoria: maquina.categoria || "maquinaria", codigo: maquina.codigo}).toString())}"
                             >
                                 Ver historial
                             </a>

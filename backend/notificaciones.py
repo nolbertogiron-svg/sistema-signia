@@ -1,4 +1,7 @@
+import json
+import logging
 import os
+from urllib.request import Request, urlopen
 import smtplib
 from datetime import datetime, timezone
 from email.message import EmailMessage
@@ -87,20 +90,6 @@ def notificar_nuevo_registro(
     trabajador_area: str = '',
 ):
     """Notifica a los administradores con los datos individuales del trabajador."""
-    if not all([SMTP_HOST, SMTP_USUARIO, SMTP_PASSWORD, CORREO_REMITENTE]):
-        print('Notificación no enviada: faltan datos de configuración SMTP.')
-        return
-
-    try:
-        destinatarios = obtener_correos_administradores()
-    except Exception as error:
-        print('No se pudieron consultar los administradores:', error)
-        return
-
-    if not destinatarios:
-        print('Notificación no enviada: no hay administradores activos con correo.')
-        return
-
     nombre_completo = ' '.join(
         dato.strip() for dato in [trabajador_nombres, trabajador_apellidos] if dato and dato.strip()
     ) or 'No identificado'
@@ -128,18 +117,59 @@ Rol de la cuenta: {usuario_rol}
 Este mensaje fue generado automáticamente por SIGNIA.
 """
 
-    mensaje = EmailMessage()
-    mensaje['Subject'] = 'SIGNIA - Nuevo mantenimiento registrado'
-    mensaje['From'] = CORREO_REMITENTE
-    mensaje['To'] = CORREO_REMITENTE
-    mensaje['Bcc'] = ', '.join(destinatarios)
-    mensaje.set_content(contenido)
+    enviar_notificacion("SIGNIA - Nuevo mantenimiento registrado", contenido)
 
+
+def notificar_nuevo_activo(codigo, categoria, descripcion, ubicacion, trabajador):
+    contenido = (
+        "Se registró un nuevo activo en SIGNIA.\n\n"
+        f"Código: {codigo}\nCategoría: {categoria}\nDescripción: {descripcion}\n"
+        f"Ubicación: {ubicacion}\nRegistrado por: {trabajador}"
+    )
+    enviar_notificacion("SIGNIA - Nuevo activo registrado", contenido)
+
+
+def enviar_notificacion(asunto, contenido):
+    api_key = os.getenv("RESEND_API_KEY", "").strip()
+    remitente_api = os.getenv("RESEND_FROM", "").strip()
     try:
+        destinatarios = obtener_correos_administradores()
+        if not destinatarios:
+            logging.warning("SIGNIA: no hay administradores activos con correo.")
+            return
+
+        if api_key and remitente_api:
+            # Enviar por separado para no exponer las direcciones entre destinatarios.
+            for correo in destinatarios:
+                solicitud = Request(
+                    "https://api.resend.com/emails",
+                    data=json.dumps({
+                        "from": remitente_api, "to": [correo],
+                        "subject": asunto, "text": contenido,
+                    }).encode("utf-8"),
+                    headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json",
+                             "User-Agent": "SIGNIA/1.0"},
+                    method="POST",
+                )
+                try:
+                    with urlopen(solicitud, timeout=15):
+                        logging.info("SIGNIA: aviso aceptado por el proveedor de correo.")
+                except Exception:
+                    logging.exception("SIGNIA: no se pudo enviar un aviso por HTTPS.")
+            return
+
+        if not all([SMTP_HOST, SMTP_USUARIO, SMTP_PASSWORD, CORREO_REMITENTE]):
+            logging.warning("SIGNIA: faltan datos de configuración de correo.")
+            return
+
+        mensaje = EmailMessage()
+        mensaje["Subject"] = asunto
+        mensaje["From"] = CORREO_REMITENTE
+        mensaje["To"] = "undisclosed-recipients:;"
+        mensaje.set_content(contenido)
         with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=30) as servidor:
             servidor.starttls()
             servidor.login(SMTP_USUARIO, SMTP_PASSWORD)
-            servidor.send_message(mensaje)
-        print(f'Notificación enviada a {len(destinatarios)} administrador(es).')
-    except Exception as error:
-        print('No se pudo enviar la notificación:', error)
+            servidor.send_message(mensaje, to_addrs=destinatarios)
+    except Exception:
+        logging.exception("SIGNIA: no se pudo enviar la notificación.")

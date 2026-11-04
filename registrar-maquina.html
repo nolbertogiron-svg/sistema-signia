@@ -485,6 +485,15 @@
 
                     </div>
 
+                    <div class="grupo-campo" id="campoFechaEjecucion" hidden>
+                        <label for="fechaEjecucion">Fecha de ejecución *</label>
+                        <input type="date" id="fechaEjecucion">
+                    </div>
+                    <div class="grupo-campo" id="campoEjecutadoPor" hidden>
+                        <label for="ejecutadoPor">Ejecutado por *</label>
+                        <input type="text" id="ejecutadoPor" maxlength="150" placeholder="Nombres y apellidos">
+                    </div>
+
                     <div class="grupo-campo">
 
                         <label for="estadoEquipo">
@@ -1430,6 +1439,18 @@ if (
                 const datos =
                     new FormData();
 
+                if (["preventivo", "correctivo"].includes(tipoMantenimiento)) {
+                    const fecha = document.getElementById("fechaEjecucion").value;
+                    const ejecutor = document.getElementById("ejecutadoPor").value.trim();
+                    if (!fecha || !ejecutor) {
+                        alert("Indica la fecha de ejecución y quién realizó el mantenimiento.");
+                        return;
+                    }
+                    datos.append("fecha_ejecucion", fecha);
+                    datos.append("ejecutado_por", ejecutor);
+                }
+
+
                 datos.append(
                     "codigo_maquina",
                     codigo.value.trim()
@@ -1554,6 +1575,7 @@ if (fallasSeleccionadas.length > 0) {
                     );
 
                     formulario.reset();
+                    actualizarCamposEjecucion();
 
                     limpiarMaquina();
 
@@ -1672,6 +1694,20 @@ if (fallasSeleccionadas.length > 0) {
         );
     </script>
 
+    <script>
+        function actualizarCamposEjecucion() {
+            const tipo = document.getElementById("tipoMantenimiento").value;
+            const requiereEjecucion = ["preventivo", "correctivo"].includes(tipo);
+            for (const id of ["fechaEjecucion", "ejecutadoPor"]) {
+                const campo = document.getElementById(id);
+                campo.parentElement.hidden = !requiereEjecucion;
+                campo.required = requiereEjecucion;
+                campo.disabled = !requiereEjecucion;
+            }
+        }
+        document.getElementById("tipoMantenimiento").addEventListener("change", actualizarCamposEjecucion);
+        actualizarCamposEjecucion();
+    </script>
     <script src="js/activos.js" defer></script>
 </body>
 

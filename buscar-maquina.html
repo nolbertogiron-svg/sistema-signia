@@ -633,6 +633,7 @@
 
             seccionDatos.classList.remove("oculto");
             window.signiaMostrarEstadoActivo?.(maquina);
+            window.signiaMostrarFotoActivo?.(maquina, datosEquipo);
         }
 
         async function cargarFallasMaquina(codigo) {
@@ -938,7 +939,12 @@
                             </div>
 
                             <p class="detalle-registro">
-                                <strong>Realizado por:</strong>
+                                <strong>Fecha de ejecución:</strong> ${escapar(registro.fecha_ejecucion?.split("-").reverse().join("/") || "Sin confirmar")}
+                                <strong> | Ejecutado por:</strong> ${escapar(registro.ejecutado_por || "Sin confirmar")}
+                            </p>
+
+                            <p class="detalle-registro">
+                                <strong>Registrado por:</strong>
                                  ${escapar(
                                      [registro.trabajador_nombres, registro.trabajador_apellidos]
                                          .filter(Boolean).join(" ") ||
@@ -1463,9 +1469,8 @@
             }
         );
 
-        const codigoPendiente = sessionStorage.getItem(
-            "signia_codigo_busqueda"
-        );
+        const codigoPendiente = new URLSearchParams(location.search).get("codigo") ||
+            sessionStorage.getItem("signia_codigo_busqueda");
 
         if (codigoPendiente) {
             campoCodigo.value = codigoPendiente;
@@ -1474,20 +1479,9 @@
                 "signia_codigo_busqueda"
             );
 
-            setTimeout(
-                function () {
-                    formulario.dispatchEvent(
-                        new Event(
-                            "submit",
-                            {
-                                cancelable: true,
-                                bubbles: true
-                            }
-                        )
-                    );
-                },
-                300
-            );
+            document.addEventListener("signiaActivosLista", () => {
+                formulario.requestSubmit();
+            }, {once: true});
         }
     </script>
     <script src="js/activos.js" defer></script>

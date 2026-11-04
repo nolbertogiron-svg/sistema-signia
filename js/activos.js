@@ -9,12 +9,77 @@
     async function solicitar(ruta, opciones = {}) {
         const sesion = window.SIGNIA_SESION;
         if (!sesion?.token) throw new Error('Espera a que se valide tu sesión.');
-        const respuesta = await fetch(window.SIGNIA_CONFIG.API_URL + ruta, {...opciones, headers: {'Content-Type': 'application/json', Authorization: 'Bearer ' + sesion.token, ...opciones.headers}});
+        const respuesta = await fetch(window.SIGNIA_CONFIG.API_URL + ruta, {...opciones, headers: {...(opciones.body instanceof FormData ? {} : {'Content-Type': 'application/json'}), Authorization: 'Bearer ' + sesion.token, ...opciones.headers}});
         let datos; try {datos = await respuesta.json();} catch (_) {throw new Error('El servidor no respondió correctamente.');}
         if (!respuesta.ok) throw new Error(typeof datos.detail === 'string' ? datos.detail : 'Revisa los datos obligatorios y vuelve a intentarlo.');
         return datos;
     }
-    window.SIGNIA_ACTIVOS = {solicitar, estados, categorias};
+    function rutaFoto(codigo) {
+        return '/activos/foto?' + new URLSearchParams({codigo});
+    }
+
+    function guardarFoto(codigo, foto) {
+        if (!['image/jpeg', 'image/png'].includes(foto.type) || foto.size > 5 * 1024 * 1024) {
+            throw new Error('Selecciona una imagen JPG o PNG de hasta 5 MB.');
+        }
+        const datos = new FormData();
+        datos.append('foto', foto);
+        return solicitar(rutaFoto(codigo), {method: 'PUT', body: datos});
+    }
+
+    window.SIGNIA_ACTIVOS = {solicitar, estados, categorias, guardarFoto};
+    window.signiaMostrarFotoActivo = function (maquina, destino) {
+        const bloque = document.createElement('div');
+        bloque.className = 'activo-estado';
+        const titulo = document.createElement('h3');
+        titulo.textContent = 'Fotografía del activo';
+        const foto = document.createElement('img');
+        foto.alt = 'Fotografía del activo ' + maquina.codigo;
+        foto.style.cssText = 'display:block;max-width:100%;max-height:320px;object-fit:contain';
+        foto.style.display = 'none';
+        const mensaje = document.createElement('p');
+        mensaje.setAttribute('role', 'status');
+        bloque.append(titulo, foto, mensaje);
+        destino.prepend(bloque);
+
+        async function cargar() {
+            try {
+                const {url} = await solicitar(rutaFoto(maquina.codigo));
+                foto.style.display = url ? 'block' : 'none';
+                if (url) foto.src = url;
+                mensaje.textContent = url ? '' : 'Este código aún no tiene una fotografía.';
+            } catch (error) {
+                mensaje.textContent = error.message;
+            }
+        }
+        foto.onerror = () => {foto.style.display = 'none'; mensaje.textContent = 'No se pudo abrir la fotografía.';};
+
+        if (esGestion(window.SIGNIA_SESION)) {
+            const selector = document.createElement('input');
+            selector.type = 'file';
+            selector.accept = 'image/jpeg,image/png';
+            selector.setAttribute('aria-label', 'Seleccionar fotografía del activo');
+            const guardar = document.createElement('button');
+            guardar.type = 'button';
+            guardar.textContent = 'Guardar fotografía';
+            guardar.onclick = async () => {
+                if (!selector.files[0]) {mensaje.textContent = 'Selecciona una fotografía.'; return;}
+                guardar.disabled = true;
+                mensaje.textContent = 'Guardando fotografía…';
+                try {
+                    await guardarFoto(maquina.codigo, selector.files[0]);
+                    selector.value = '';
+                    await cargar();
+                } catch (error) {
+                    mensaje.textContent = error.message;
+                } finally {
+                    guardar.disabled = false;
+                }
+            };
+            bloque.append(selector, guardar);
+        }
+        cargar();
+    };
     function iniciar(sesion) {
         const gestion = esGestion(sesion);
         const menu = document.querySelector('nav.menu');
@@ -26,15 +91,18 @@
                 if (grupo) grupo.querySelector('summary').textContent = 'Maquinarias';
                 original.href = 'buscar-maquina.html?categoria=maquinaria';
                 original.textContent = '🔎 Buscar maquinaria';
+                for (const clave of ['equipo', 'infraestructura']) {
+                    const bloque = document.createElement('details'); bloque.className = 'signia-grupo';
+                    const titulo = document.createElement('summary'); titulo.textContent = categorias[clave][0];
+                    const enlace = document.createElement('a'); enlace.href = 'buscar-maquina.html?categoria=' + clave; enlace.textContent = '🔎 Buscar ' + categorias[clave][1];
+                    bloque.append(titulo, enlace); (grupo || original).after(bloque);
+                    if (location.pathname.endsWith('buscar-maquina.html') && categoria === clave) {bloque.open = true; enlace.classList.add('activo'); if (grupo) grupo.open = false;}
+                }
                 if (gestion) {
-                    for (const clave of ['equipo', 'infraestructura']) {
-                        const bloque = document.createElement('details'); bloque.className = 'signia-grupo';
-                        const titulo = document.createElement('summary'); titulo.textContent = categorias[clave][0];
-                        const enlace = document.createElement('a'); enlace.href = 'buscar-maquina.html?categoria=' + clave; enlace.textContent = '🔎 Buscar ' + categorias[clave][1];
-                        bloque.append(titulo, enlace); (grupo || original).after(bloque);
-                        if (location.pathname.endsWith('buscar-maquina.html') && categoria === clave) {bloque.open = true; enlace.classList.add('activo'); if (grupo) grupo.open = false;}
-                    }
-                    const nuevo = document.createElement('a'); nuevo.href = 'nuevo-activo.html'; nuevo.textContent = '＋ Registrar nuevo activo'; menu.append(nuevo);
+                    const nuevo = document.createElement('a');
+                    nuevo.href = 'nuevo-activo.html';
+                    nuevo.textContent = '＋ Registrar nuevo activo';
+                    menu.append(nuevo);
                 }
             }
         }
@@ -47,13 +115,13 @@
             const codigoInicial = parametros.get('codigo');
             if (codigoInicial) {const input = document.querySelector('form input'); if(input) input.value = codigoInicial;}
             const form = document.querySelector('form');
-            if (gestion && form && !document.getElementById('bloquesCategoria')) {
+            if (form && !document.getElementById('bloquesCategoria')) {
                 const bloques = document.createElement('div'); bloques.id = 'bloquesCategoria'; bloques.className = 'activos-bloques';
                 Object.entries(categorias).forEach(([clave, valor]) => {const a = document.createElement('a'); a.href = 'buscar-maquina.html?categoria=' + clave; a.textContent = valor[0]; if (clave === categoria) a.setAttribute('aria-current','page'); bloques.append(a);});
                 form.before(bloques);
             }
         }
-        if (gestion && location.pathname.endsWith('panel.html') && !document.getElementById('categoriasPanel')) {
+        if (location.pathname.endsWith('panel.html') && !document.getElementById('categoriasPanel')) {
             const bloque = document.createElement('section'); bloque.id = 'categoriasPanel'; bloque.className = 'activos-bloques';
             Object.entries(categorias).forEach(([clave, valor]) => {const a = document.createElement('a'); a.href = 'buscar-maquina.html?categoria=' + clave; a.textContent = valor[0]; a.dataset.categoriaResumen = clave; bloque.append(a);});
             const main = document.querySelector('main'); if (main) main.prepend(bloque);

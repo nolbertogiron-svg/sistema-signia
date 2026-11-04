@@ -1,5 +1,5 @@
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Optional
 
 from pydantic import (
@@ -238,6 +238,8 @@ class RegistroCrear(BaseModel):
 
 
 class RegistroRespuesta(BaseModel):
+    fecha_ejecucion: Optional[date] = None
+    ejecutado_por: Optional[str] = None
     model_config = ConfigDict(
         from_attributes=True
     )

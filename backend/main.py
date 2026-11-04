@@ -1,6 +1,8 @@
 from typing import List, Optional
 
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
+from zoneinfo import ZoneInfo
+import logging
 
 from uuid import uuid4
 
@@ -51,7 +53,7 @@ from models import (
 
 )
 
-from notificaciones import notificar_nuevo_registro
+from notificaciones import notificar_nuevo_activo, notificar_nuevo_registro
 
 from schemas import (
     ActivoCrear,
@@ -72,6 +74,7 @@ from seguridad import permitir_roles, obtener_trabajador_actual
 
 from storage_supabase import (
 
+    eliminar_archivos,
     obtener_url_temporal,
 
     subir_archivo,
@@ -270,7 +273,7 @@ async def leer_archivo_validado(
 
     )
 
-    contenido = await archivo.read()
+    contenido = await archivo.read(limite_bytes + 1)
 
     if not contenido:
 
@@ -1256,6 +1259,8 @@ async def crear_registro(
     comentario: str = Form(...),
 
     tipo_mantenimiento: str = Form(...),
+    fecha_ejecucion: Optional[date] = Form(None),
+    ejecutado_por: Optional[str] = Form(None, max_length=150),
 
     estado_equipo: str = Form(
 
@@ -1655,6 +1660,16 @@ async def crear_registro(
 
         )
 
+    ejecutor = (ejecutado_por or "").strip() or None
+    if tipo_limpio in ("preventivo", "correctivo"):
+        if not fecha_ejecucion or not ejecutor:
+            raise HTTPException(status_code=422, detail="Indica la fecha de ejecución y el nombre de quien realizó el mantenimiento.")
+        if fecha_ejecucion > datetime.now(ZoneInfo("America/Lima")).date():
+            raise HTTPException(status_code=422, detail="La fecha de ejecución no puede ser futura.")
+    else:
+        fecha_ejecucion = None
+        ejecutor = None
+
     nuevo_registro = (
 
         RegistroMantenimiento(
@@ -1680,6 +1695,8 @@ async def crear_registro(
                 tipo_limpio,
 
             foto_url=None,
+            fecha_ejecucion=fecha_ejecucion,
+            ejecutado_por=ejecutor,
 
         )
 
@@ -2034,6 +2051,8 @@ def listar_registros(
 
                     archivos,
 
+                "fecha_ejecucion": registro.fecha_ejecucion,
+                "ejecutado_por": registro.ejecutado_por,
                 "fecha_hora":
 
                     registro.fecha_hora,
@@ -2263,6 +2282,8 @@ def historial_maquina(
 
                     archivos,
 
+                "fecha_ejecucion": registro.fecha_ejecucion,
+                "ejecutado_por": registro.ejecutado_por,
                 "fecha_hora":
 
                     registro.fecha_hora,
@@ -3291,6 +3312,7 @@ app.include_router(
 @app.post("/activos", response_model=MaquinaRespuesta, status_code=201)
 def crear_activo(
     datos: ActivoCrear,
+    background_tasks: BackgroundTasks,
     base_datos: Session = Depends(obtener_base_datos),
     trabajador_actual: Trabajador = Depends(obtener_trabajador_actual),
     usuario_actual: Usuario = Depends(permitir_roles("administracion", "administrador")),
@@ -3306,7 +3328,65 @@ def crear_activo(
         base_datos.add(activo)
         base_datos.commit()
         base_datos.refresh(activo)
+        background_tasks.add_task(
+            notificar_nuevo_activo, activo.codigo, activo.categoria, activo.tipo_activo,
+            activo.ubicacion_referencia,
+            f"{trabajador_actual.nombres} {trabajador_actual.apellidos}".strip(),
+        )
         return activo
     except IntegrityError:
         base_datos.rollback()
         raise HTTPException(status_code=409, detail="Este código ya existe")
+
+
+@app.get("/activos/foto")
+def consultar_foto_activo(
+    codigo: str,
+    base_datos: Session = Depends(obtener_base_datos),
+    trabajador_actual: Trabajador = Depends(obtener_trabajador_actual),
+    usuario_actual: Usuario = Depends(permitir_roles(*ROLES_CONSULTA)),
+):
+    activo = base_datos.query(Maquina).filter_by(codigo=codigo).first()
+    if not activo:
+        raise HTTPException(status_code=404, detail="Activo no encontrado.")
+    return {"url": obtener_url_temporal(activo.ruta_foto_activo) if activo.ruta_foto_activo else None}
+
+
+@app.put("/activos/foto")
+async def guardar_foto_activo(
+    codigo: str,
+    foto: UploadFile = File(...),
+    base_datos: Session = Depends(obtener_base_datos),
+    trabajador_actual: Trabajador = Depends(obtener_trabajador_actual),
+    usuario_actual: Usuario = Depends(permitir_roles(*ROLES_ADMINISTRATIVOS)),
+):
+    contenido, extension = await leer_archivo_validado(foto, TIPOS_FOTOGRAFIA, LIMITE_FOTOGRAFIA, "La imagen")
+    firma = b"\xff\xd8\xff" if extension == ".jpg" else b"\x89PNG\r\n\x1a\n"
+    if not contenido.startswith(firma):
+        raise HTTPException(status_code=400, detail="Selecciona una imagen JPG o PNG válida.")
+
+    activo = base_datos.query(Maquina).filter_by(codigo=codigo).with_for_update().first()
+    if not activo:
+        raise HTTPException(status_code=404, detail="Activo no encontrado.")
+    anterior = activo.ruta_foto_activo
+    ruta = f"fotos_activos/{activo.id}/{uuid4().hex}{extension}"
+    try:
+        subir_archivo(contenido, ruta, foto.content_type)
+        activo.ruta_foto_activo = ruta
+        base_datos.commit()
+    except Exception:
+        base_datos.rollback()
+        logging.exception("No se pudo guardar la foto del activo")
+        retirar_foto_activo(ruta)
+        raise HTTPException(status_code=502, detail="No se pudo guardar la foto. Vuelve a intentarlo.")
+    if anterior:
+        retirar_foto_activo(anterior)
+    return {"guardada": True}
+
+
+
+def retirar_foto_activo(ruta):
+    try:
+        eliminar_archivos([ruta])
+    except Exception:
+        logging.exception("No se pudo retirar una foto de activo del almacenamiento")

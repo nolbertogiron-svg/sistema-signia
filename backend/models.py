@@ -2,6 +2,7 @@
 from sqlalchemy import (
     Boolean,
     Column,
+    Date,
     DateTime,
     ForeignKey,
     Integer,
@@ -153,6 +154,7 @@ class Trabajador(Base):
 # =========================================================
 
 class Maquina(Base):
+    ruta_foto_activo = Column(Text, nullable=True)
     categoria = Column(String(30), nullable=False, default="maquinaria", server_default="maquinaria")
 
     __tablename__ = "maquinas"
@@ -266,6 +268,9 @@ class Maquina(Base):
 
 class RegistroMantenimiento(Base):
     __tablename__ = "registros_mantenimiento"
+
+    fecha_ejecucion = Column(Date, nullable=True)
+    ejecutado_por = Column(String(150), nullable=True)
 
     id = Column(
         Integer,
